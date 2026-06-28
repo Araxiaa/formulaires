@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suivi — Le Prix de la Trêve</title>
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="./index.html" class="nav-logo">
+      <span class="nav-logo-mark">⚔</span>
+      <span class="nav-logo-text">Le Prix de la <em>Trêve</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="./index.html"        class="nav-link" data-page="postes">Postes</a>
+      <a href="./candidature.html"  class="nav-link" data-page="candidature">Candidater</a>
+      <a href="./suivi.html"        class="nav-link" data-page="suivi">Mon suivi</a>
+      <a href="./admin.html"        class="nav-link nav-link-admin" data-page="admin">Staff ↗</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <p class="hero-eyebrow">Suivi de candidature</p>
+  <h1 class="hero-title">Où en suis-je ?</h1>
+  <p class="hero-sub">Entre ton code de suivi pour connaître l'état de ta candidature en temps réel.</p>
+</header>
+
+<main class="main">
+
+  <div style="max-width:420px;">
+    <div class="form-group">
+      <label class="form-label" for="suivi-code">Code de suivi</label>
+      <div style="display:flex; gap:8px;">
+        <input type="text" id="suivi-code" placeholder="ex : TRV-A3B7X9" style="text-transform:uppercase; letter-spacing:.06em; font-family:'Courier New',monospace;">
+        <button class="btn btn-primary" onclick="checkSuivi()" style="white-space:nowrap;">Vérifier</button>
+      </div>
+      <p class="form-hint">Le code t'a été communiqué au moment de la soumission de ta candidature.</p>
+    </div>
+  </div>
+
+  <!-- Résultat -->
+  <div id="suivi-result" class="hidden"></div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./js/config.js"></script>
+<script src="./js/data.js"></script>
+<script src="./js/utils.js"></script>
+<script src="./js/suivi.js"></script>
+</body>
+</html>

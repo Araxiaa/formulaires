@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candidature — Le Prix de la Trêve</title>
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="./index.html" class="nav-logo">
+      <span class="nav-logo-mark">⚔</span>
+      <span class="nav-logo-text">Le Prix de la <em>Trêve</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="./index.html"        class="nav-link" data-page="postes">Postes</a>
+      <a href="./candidature.html"  class="nav-link" data-page="candidature">Candidater</a>
+      <a href="./suivi.html"        class="nav-link" data-page="suivi">Mon suivi</a>
+      <a href="./admin.html"        class="nav-link nav-link-admin" data-page="admin">Staff ↗</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <p class="hero-eyebrow">Formulaire de candidature</p>
+  <h1 class="hero-title">Pose ta candidature</h1>
+  <p class="hero-sub">Choisis le type de candidature ci-dessous et remplis le formulaire correspondant.</p>
+</header>
+
+<main class="main">
+
+  <!-- Onglets Staff / Hauts Rangs -->
+  <div class="form-tabs">
+    <button class="form-tab active" data-tab="staff" onclick="switchTab('staff', this)">Staff</button>
+    <button class="form-tab"        data-tab="hr"    onclick="switchTab('hr', this)">Hauts Rangs</button>
+  </div>
+
+  <!-- ===========================
+       FORMULAIRE STAFF
+  ============================ -->
+  <div class="form-view active" id="fv-staff">
+    <div class="selected-post-banner" id="banner-staff"></div>
+
+    <form class="form-section" id="form-staff" onsubmit="return false;">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="s-pole">Pôle visé</label>
+          <select id="s-pole" onchange="updateRoleOptions()">
+            <option value="">— Sélectionner un pôle —</option>
+            <option value="guide">Pôle Guide</option>
+            <option value="narration">Pôle Narration</option>
+            <option value="batisseur">Pôle Bâtisseur</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="s-role">Rôle visé</label>
+          <select id="s-role">
+            <option value="">— Sélectionner d'abord un pôle —</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="s-pseudo">Pseudo Discord</label>
+        <input type="text" id="s-pseudo" placeholder="ton pseudo Discord">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="s-anciennete">Depuis combien de temps es-tu membre du serveur ?</label>
+        <input type="text" id="s-anciennete" placeholder="ex : 8 mois, 1 an…">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="s-motivation">Présente-toi et motive ta candidature</label>
+        <textarea id="s-motivation" rows="6"
+          placeholder="Parle-nous de toi, de tes points forts et de ce qui te motive à rejoindre cette équipe. Qu'est-ce que tu apporterais à ce pôle ?"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="s-dispo">Disponibilités hebdomadaires</label>
+        <input type="text" id="s-dispo" placeholder="ex : soirs en semaine + journée le week-end">
+        <p class="form-hint">Un minimum de 5h par semaine est requis pour la plupart des postes staff.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="s-experience">Expérience staff (facultatif)</label>
+        <textarea id="s-experience" rows="3"
+          placeholder="As-tu déjà occupé un rôle staff sur d'autres serveurs Discord ? Si oui, décris brièvement tes expériences."></textarea>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="submitStaff()">
+        Envoyer ma candidature →
+      </button>
+
+    </form>
+  </div>
+
+  <!-- ===========================
+       FORMULAIRE HAUTS RANGS
+  ============================ -->
+  <div class="form-view" id="fv-hr">
+    <div class="selected-post-banner" id="banner-hr"></div>
+
+    <form class="form-section" id="form-hr" onsubmit="return false;">
+
+      <div class="form-group">
+        <label class="form-label" for="hr-poste">Rang visé</label>
+        <select id="hr-poste">
+          <option value="">Chargement des postes…</option>
+        </select>
+        <p class="form-hint">Seuls les rangs actuellement ouverts apparaissent dans cette liste.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="hr-pseudo">Pseudo Discord</label>
+        <input type="text" id="hr-pseudo" placeholder="ton pseudo Discord">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="hr-oc">Nom de ton personnage (OC)</label>
+          <input type="text" id="hr-oc" placeholder="Nom complet de l'OC">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="hr-rang-actuel">Rang actuel du personnage</label>
+          <input type="text" id="hr-rang-actuel" placeholder="ex : Guerrier·ère">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="hr-anciennete">Depuis combien de temps joues-tu ce personnage ?</label>
+        <input type="text" id="hr-anciennete" placeholder="ex : 6 mois, depuis le lancement…">
+        <p class="form-hint">Un minimum d'ancienneté sur le serveur peut être requis selon le rang.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="hr-moti-ooc">Motivation hors-roleplay (joueur·se)</label>
+        <textarea id="hr-moti-ooc" rows="5"
+          placeholder="Pourquoi souhaites-tu incarner ce rang ? Quelles sont tes intentions narratives ? Comment comptes-tu t'investir dans la vie du clan et dans les intrigues collectives ?"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="hr-moti-ic">Motivation en roleplay (voix de ton personnage)</label>
+        <textarea id="hr-moti-ic" rows="4"
+          placeholder="Comment ton personnage envisage-t-il ce rôle ? Qu'est-ce qui le/la pousse à aspirer à cette position au sein du Clan ?"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="hr-extrait">Extrait roleplay</label>
+        <textarea id="hr-extrait" rows="10"
+          placeholder="Propose un extrait roleplay de 10 à 20 lignes illustrant ton style d'écriture dans la peau de ce personnage. Il peut s'agir d'une scène de ton choix, inédite ou déjà jouée."></textarea>
+        <p class="form-hint">Cet extrait nous permet d'évaluer ton style d'écriture et ton incarnation du personnage.</p>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="submitHR()">
+        Envoyer ma candidature →
+      </button>
+
+    </form>
+  </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./js/config.js"></script>
+<script src="./js/data.js"></script>
+<script src="./js/utils.js"></script>
+<script src="./js/candidature.js"></script>
+</body>
+</html>

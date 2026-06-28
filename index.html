@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Postes — Le Prix de la Trêve</title>
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="./index.html" class="nav-logo">
+      <span class="nav-logo-mark">⚔</span>
+      <span class="nav-logo-text">Le Prix de la <em>Trêve</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="./index.html"        class="nav-link" data-page="postes">Postes</a>
+      <a href="./candidature.html"  class="nav-link" data-page="candidature">Candidater</a>
+      <a href="./suivi.html"        class="nav-link" data-page="suivi">Mon suivi</a>
+      <a href="./admin.html"        class="nav-link nav-link-admin" data-page="admin">Staff ↗</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <p class="hero-eyebrow">Candidatures ouvertes en continu</p>
+  <h1 class="hero-title">Rejoins l'aventure</h1>
+  <p class="hero-sub">Les candidatures Staff et Hauts Rangs sont accessibles à tout moment. Consulte les postes disponibles ci-dessous.</p>
+</header>
+
+<main class="main">
+
+  <!-- Switcher Staff / Hauts Rangs -->
+  <div class="type-switcher">
+    <button class="type-btn active" data-type="staff"  onclick="switchType('staff', this)">Staff</button>
+    <button class="type-btn"        data-type="hr"     onclick="switchType('hr', this)">Hauts Rangs</button>
+  </div>
+
+  <!-- Vue Staff -->
+  <div class="subview active" id="sv-staff">
+    <div class="stats-bar" id="stats-staff">
+      <div class="stat-card"><div class="stat-num" id="sn-poles">—</div><div class="stat-lbl">Pôles</div></div>
+      <div class="stat-card"><div class="stat-num" id="sn-ouv">—</div><div class="stat-lbl">Postes ouverts</div></div>
+      <div class="stat-card"><div class="stat-num" id="sn-places">—</div><div class="stat-lbl">Places disponibles</div></div>
+      <div class="stat-card"><div class="stat-num" id="sn-comp">—</div><div class="stat-lbl">Complets</div></div>
+    </div>
+    <div id="staff-sections">
+      <div class="loading-wrap"><div class="spinner"></div>Chargement des postes…</div>
+    </div>
+  </div>
+
+  <!-- Vue Hauts Rangs -->
+  <div class="subview" id="sv-hr">
+    <div class="stats-bar">
+      <div class="stat-card"><div class="stat-num">3</div><div class="stat-lbl">Clans actifs</div></div>
+      <div class="stat-card"><div class="stat-num" id="hr-ouv">—</div><div class="stat-lbl">Poste(s) ouvert(s)</div></div>
+      <div class="stat-card"><div class="stat-num" id="hr-ind">—</div><div class="stat-lbl">Occupés</div></div>
+      <div class="stat-card"><div class="stat-num" id="hr-total">—</div><div class="stat-lbl">Rangs totaux</div></div>
+    </div>
+    <div id="hr-sections">
+      <div class="loading-wrap"><div class="spinner"></div>Chargement des hauts rangs…</div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Modale liste d'attente -->
+<div class="modal-overlay" id="modal-attente">
+  <div class="modal-box">
+    <h2 class="modal-title">Liste d'attente</h2>
+    <p class="modal-sub" id="modal-attente-sub">Laisse ton pseudo Discord pour être notifié·e dès qu'une place se libère sur ce poste.</p>
+    <div class="form-group">
+      <label class="form-label" for="attente-pseudo">Ton pseudo Discord</label>
+      <input type="text" id="attente-pseudo" placeholder="pseudo ou identifiant Discord">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="submitAttente()">S'inscrire</button>
+      <button class="btn btn-ghost"   onclick="closeModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./js/config.js"></script>
+<script src="./js/data.js"></script>
+<script src="./js/utils.js"></script>
+<script src="./js/postes.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration — Le Prix de la Trêve</title>
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="./index.html" class="nav-logo">
+      <span class="nav-logo-mark">⚔</span>
+      <span class="nav-logo-text">Le Prix de la <em>Trêve</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="./index.html"        class="nav-link" data-page="postes">Postes</a>
+      <a href="./candidature.html"  class="nav-link" data-page="candidature">Candidater</a>
+      <a href="./suivi.html"        class="nav-link" data-page="suivi">Mon suivi</a>
+      <a href="./admin.html"        class="nav-link nav-link-admin active" data-page="admin">Staff ↗</a>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- ===========================
+       GATE : CONNEXION
+  ============================ -->
+  <div id="admin-gate" class="admin-gate">
+    <span class="admin-gate-icon">⚿</span>
+    <h1 class="admin-title">Espace administration</h1>
+    <p class="admin-sub">Réservé aux membres du staff. Connecte-toi avec ton compte Supabase.</p>
+
+    <div class="form-group">
+      <label class="form-label" for="admin-email">Email</label>
+      <input type="email" id="admin-email" placeholder="adresse@email.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="admin-pw">Mot de passe</label>
+      <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="loginAdmin()">Accéder au panel</button>
+    <p class="admin-demo">Le compte doit être créé dans Supabase Dashboard › Authentication › Users.</p>
+  </div>
+
+  <!-- ===========================
+       PANEL ADMIN
+  ============================ -->
+  <div id="admin-panel" class="hidden">
+
+    <div class="admin-panel-header">
+      <div>
+        <h1 class="admin-title" style="margin:0;">Panel d'administration</h1>
+        <p style="font-size:12px; color:var(--text-3); margin-top:3px;" id="admin-user-info"></p>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="logoutAdmin()">Déconnexion</button>
+    </div>
+
+    <!-- Postes Staff -->
+    <div class="admin-section-label">Postes Staff</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Rôle</th>
+            <th>Pôle</th>
+            <th>Places</th>
+            <th>Statut</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="admin-staff-tbody">
+          <tr><td colspan="5" class="td-muted">Chargement…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Postes Hauts Rangs -->
+    <div class="admin-section-label">Hauts Rangs</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Rang</th>
+            <th>Clan</th>
+            <th>Titulaire actuel·le</th>
+            <th>Statut</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="admin-hr-tbody">
+          <tr><td colspan="5" class="td-muted">Chargement…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Candidatures -->
+    <div class="admin-section-label">Candidatures</div>
+
+    <!-- Filtres candidatures -->
+    <div style="display:flex; gap:8px; margin-bottom:1rem; flex-wrap:wrap;">
+      <select id="filter-cand-type"   class="admin-select" onchange="filterCandidatures()" style="width:auto;">
+        <option value="">Tous types</option>
+        <option value="staff">Staff</option>
+        <option value="hr">Hauts Rangs</option>
+      </select>
+      <select id="filter-cand-statut" class="admin-select" onchange="filterCandidatures()" style="width:auto;">
+        <option value="">Tous statuts</option>
+        <option value="recue">Reçue</option>
+        <option value="examen">En examen</option>
+        <option value="acceptee">Acceptée</option>
+        <option value="refusee">Refusée</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Pseudo</th>
+            <th>Type</th>
+            <th>Poste</th>
+            <th>Date</th>
+            <th>Statut</th>
+            <th>Détail</th>
+          </tr>
+        </thead>
+        <tbody id="admin-cand-tbody">
+          <tr><td colspan="7" class="td-muted">Chargement…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Détail candidature (panneau latéral) -->
+  <div class="modal-overlay" id="modal-detail">
+    <div class="modal-box" style="max-width:580px; max-height:85vh; overflow-y:auto;">
+      <h2 class="modal-title" id="detail-title">Détail de la candidature</h2>
+      <div id="detail-content" style="margin-top:1rem;"></div>
+      <div class="modal-actions" style="margin-top:1.25rem;">
+        <button class="btn btn-ghost" onclick="closeDetailModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./js/config.js"></script>
+<script src="./js/data.js"></script>
+<script src="./js/utils.js"></script>
+<script src="./js/admin.js"></script>
+</body>
+</html>
