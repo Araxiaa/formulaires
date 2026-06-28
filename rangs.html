@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hauts Rangs — Le Prix de la Trêve</title>
+  <link rel="stylesheet" href="./css/main.css">
+  <script>
+    (function(){
+      var t = localStorage.getItem('lpdt_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+<nav class="nav" id="nav"></nav>
+
+<header class="hero">
+  <p class="hero-eyebrow">Composition actuelle</p>
+  <h1 class="hero-title">Hauts Rangs</h1>
+  <p class="hero-sub">Les membres occupant les postes de Hauts Rangs au sein des trois clans.</p>
+</header>
+
+<main class="main" id="rangs-main">
+  <div class="loading-wrap"><div class="spinner"></div>Chargement…</div>
+</main>
+
+<div id="footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./js/config.js"></script>
+<script src="./js/data.js"></script>
+<script src="./js/utils.js"></script>
+<script src="./js/rangs.js"></script>
+</body>
+</html>

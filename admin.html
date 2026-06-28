@@ -1,27 +1,20 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Administration — Le Prix de la Trêve</title>
   <link rel="stylesheet" href="./css/main.css">
+  <script>
+    (function(){
+      var t = localStorage.getItem('lpdt_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="./index.html" class="nav-logo">
-      <span class="nav-logo-mark">⚔</span>
-      <span class="nav-logo-text">Le Prix de la <em>Trêve</em></span>
-    </a>
-    <div class="nav-links">
-      <a href="./index.html"        class="nav-link" data-page="postes">Postes</a>
-      <a href="./candidature.html"  class="nav-link" data-page="candidature">Candidater</a>
-      <a href="./suivi.html"        class="nav-link" data-page="suivi">Mon suivi</a>
-      <a href="./admin.html"        class="nav-link nav-link-admin active" data-page="admin">Staff ↗</a>
-    </div>
-  </div>
-</nav>
+<nav class="nav" id="nav"></nav>
 
 <main class="main">
 
@@ -56,6 +49,31 @@
         <p style="font-size:12px; color:var(--text-3); margin-top:3px;" id="admin-user-info"></p>
       </div>
       <button class="btn btn-ghost btn-sm" onclick="logoutAdmin()">Déconnexion</button>
+    </div>
+
+
+    <!-- Statistiques -->
+    <div class="stats-admin" id="admin-stats">
+      <div class="stat-admin-card highlight">
+        <div class="stat-admin-num" id="stat-mois">—</div>
+        <div class="stat-admin-lbl">Ce mois-ci</div>
+        <div class="stat-admin-sub">candidatures reçues</div>
+      </div>
+      <div class="stat-admin-card">
+        <div class="stat-admin-num" id="stat-taux">—</div>
+        <div class="stat-admin-lbl">Taux d'acceptation</div>
+        <div class="stat-admin-sub">sur les candidatures décidées</div>
+      </div>
+      <div class="stat-admin-card">
+        <div class="stat-admin-num" id="stat-delai">—</div>
+        <div class="stat-admin-lbl">Délai moyen</div>
+        <div class="stat-admin-sub">entre réception et décision</div>
+      </div>
+      <div class="stat-admin-card">
+        <div class="stat-admin-num" id="stat-attente">—</div>
+        <div class="stat-admin-lbl">En attente</div>
+        <div class="stat-admin-sub">de décision du staff</div>
+      </div>
     </div>
 
     <!-- Postes Staff -->
@@ -96,6 +114,32 @@
       </table>
     </div>
 
+
+    <!-- Listes d'attente -->
+    <div class="admin-section-label">Listes d'attente <span id="attente-count" style="font-weight:400;color:var(--text-3);text-transform:none;letter-spacing:0;"></span></div>
+    <p style="font-size:12px;color:var(--text-2);margin-bottom:.875rem;">
+      Ajoute l'ID Discord de chaque membre pour que la notification l'identifie correctement lors de l'ouverture du poste.
+      <a href="https://support.discord.com/hc/fr/articles/206346498" target="_blank" style="color:var(--accent);">Comment trouver un ID ?</a>
+    </p>
+    <div id="admin-attente-wrap">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Pseudo Discord</th>
+              <th>ID Discord</th>
+              <th>Poste</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="admin-attente-tbody">
+            <tr><td colspan="5" class="td-muted">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- Candidatures -->
     <div class="admin-section-label">Candidatures</div>
 
@@ -105,6 +149,8 @@
         <option value="">Tous types</option>
         <option value="staff">Staff</option>
         <option value="hr">Hauts Rangs</option>
+        <option value="oc3">3ème OC</option>
+        <option value="oc4">4ème OC</option>
       </select>
       <select id="filter-cand-statut" class="admin-select" onchange="filterCandidatures()" style="width:auto;">
         <option value="">Tous statuts</option>
@@ -154,5 +200,6 @@
 <script src="./js/data.js"></script>
 <script src="./js/utils.js"></script>
 <script src="./js/admin.js"></script>
+  <div id="footer"></div>
 </body>
 </html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — Le Prix de la Trêve</title>
+  <link rel="stylesheet" href="./css/main.css">
+  <style>
+    .faq-list { max-width: 680px; }
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      margin-bottom: 8px;
+      overflow: hidden;
+      transition: border-color .15s;
+    }
+    .faq-item.open { border-color: var(--border-s); }
+    .faq-q {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 1rem 1.125rem;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-1);
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+    .faq-q::after {
+      content: '+';
+      font-size: 18px;
+      color: var(--text-3);
+      flex-shrink: 0;
+      transition: transform .2s;
+    }
+    .faq-item.open .faq-q::after { transform: rotate(45deg); }
+    .faq-a {
+      display: none;
+      padding: 0 1.125rem 1rem;
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.7;
+      border-top: 1px solid var(--border);
+    }
+    .faq-item.open .faq-a { display: block; }
+    .faq-a a { color: var(--accent); }
+    .faq-section-title {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin: 2rem 0 .875rem;
+    }
+    .faq-section-title:first-child { margin-top: 0; }
+  </style>
+  <script>
+    (function(){
+      var t = localStorage.getItem('lpdt_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+<nav class="nav" id="nav"></nav>
+
+<header class="hero">
+  <p class="hero-eyebrow">Questions fréquentes</p>
+  <h1 class="hero-title">FAQ</h1>
+  <p class="hero-sub">Les réponses aux questions les plus courantes sur le processus de candidature.</p>
+</header>
+
+<main class="main">
+<div class="faq-list">
+
+  <div class="faq-section-title">Processus général</div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggle(this)">Combien de temps faut-il compter avant d'avoir une réponse ?</div>
+    <div class="faq-a">
+      Les délais varient entre <strong>72 heures et 14 jours</strong> selon les périodes. L'équipe staff jongle entre ses responsabilités sur le serveur et sa vie personnelle — merci d'en tenir compte et de ne pas relancer avant ce délai. La page <a href="./suivi.html">Mon suivi</a> te permet de connaître l'état de ta candidature en temps réel.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggle(this)">Puis-je envoyer une deuxième candidature si ma première est toujours en cours ?</div>
+    <div class="faq-a">
+      Non. Le site bloque automatiquement toute nouvelle candidature du même type si tu en as déjà une en cours de traitement. Elle ne sera tout simplement pas enregistrée. Attends que ta candidature soit traitée avant d'en soumettre une nouvelle.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggle(this)">Puis-je modifier ma candidature après l'avoir envoyée ?</div>
+    <div class="faq-a">
+      Oui, mais uniquement <strong>via un ticket</strong> ouvert directement auprès du staff. Tu devras expliquer clairement la raison de ta demande et ce que tu souhaites changer. Le staff examinera si la modification peut être prise en compte — cela n'est pas garanti.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggle(this)">J'ai perdu mon code de suivi. Comment le récupérer ?</div>
+    <div class="faq-a">
+      Tu peux contacter un membre du staff pour qu'il te le transmette à nouveau. Cependant, <strong>évite d'en abuser</strong> : ce n'est pas un service systématique et le staff ne le fera pas de manière répétée. Pense à noter ou copier ton code dès la soumission de ta candidature.
+    </div>
+  </div>
+
+  <div class="faq-section-title">Candidatures Staff</div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggle(this)">Y a-t-il une ancienneté minimale requise pour candidater au staff ?</div>
+    <div class="faq-a">
+      Nous demandons une ancienneté d'au moins <strong>un à deux mois</strong> sur le serveur. Ce délai te permet de comprendre comment fonctionne la communauté, de te familiariser avec le roleplay et de te faire connaître de l'équipe. Une candidature trop précoce sera généralement écartée.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggle(this)">Y a-t-il une période d'essai après acceptation ?</div>
+    <div class="faq-a">
+      Oui. Une <strong>période d'essai d'un mois</strong> est prévue après acceptation. Durant ce mois, l'apprenti staff et l'équipe apprennent à travailler ensemble. À l'issue, un bilan collectif est organisé pour décider si la collaboration continue, est prolongée ou s'arrête.<br><br>
+      L'apprenti a lui aussi son mot à dire : tu peux tout à fait décider, à la fin du mois, de ne pas poursuivre si l'expérience ne te convient pas. La décision appartient aux deux parties.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggle(this)">Les candidatures staff sont-elles toujours ouvertes ?</div>
+    <div class="faq-a">
+      Non, les candidatures staff ne sont <strong>pas ouvertes en permanence</strong>. Lorsque le recrutement est fermé, tu peux t'inscrire sur la <strong>liste d'attente</strong> depuis la page des postes. Tu seras alors notifié·e sur Discord dès qu'un recrutement ouvre — c'est le seul moyen d'être prévenu·e en priorité.
+    </div>
+  </div>
+
+  <div class="faq-section-title">Hauts Rangs</div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggle(this)">Quand un poste de Haut Rang s'ouvre-t-il ?</div>
+    <div class="faq-a">
+      Un poste peut s'ouvrir lorsqu'un joueur quitte le serveur et que son rang se retrouve sans successeur désigné. Les postes <strong>les plus susceptibles de s'ouvrir</strong> sont l'Apprenti·e guérisseur·se, le/la Guérisseur·se et le/la Lieutenant·e. Consulte la page <a href="./rangs.html">Hauts Rangs</a> pour voir la composition actuelle des clans.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggle(this)">Mon OC doit-il appartenir au clan du rang visé ?</div>
+    <div class="faq-a">
+      Oui, <strong>obligatoirement</strong>. Tu ne peux pas, par exemple, candidater au poste de Lieutenant·e du Clan de l'Ombre avec un personnage du Clan du Vent. Assure-toi de sélectionner le bon rang dans le formulaire.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggle(this)">Qu'est-ce que la liste d'attente HR m'apporte concrètement ?</div>
+    <div class="faq-a">
+      La liste d'attente te permet d'être <strong>notifié·e sur Discord</strong> dès que le poste s'ouvre. Elle ne te donne aucun privilège supplémentaire : une fois le poste disponible, tu peux soumettre ta candidature comme n'importe quel autre membre. Tout le monde part sur un pied d'égalité.
+    </div>
+  </div>
+
+  <div class="faq-section-title">Demandes d'OC supplémentaire</div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggle(this)">Quelle est la vraie différence entre une demande de 3ème et de 4ème OC ?</div>
+    <div class="faq-a">
+      Pour un <strong>3ème OC</strong>, la principale question est celle de ton activité avec tes deux personnages actuels et de la cohérence du nouveau concept.<br><br>
+      Pour un <strong>4ème OC</strong>, la question centrale est celle du <strong>placement et de l'apport narratif</strong> : où ira ce personnage ? Dans un clan où tu as déjà d'autres OCs — ce qui signifie deux personnages dans le même clan — ou chez les citadins (Solitaires / Domestiques) ? Et surtout : qu'est-ce que ce quatrième personnage va apporter au lore du serveur ? C'est sur cette dimension que ta demande sera principalement évaluée.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggle(this)">Une demande d'OC peut-elle être refusée même si je suis très actif·ve ?</div>
+    <div class="faq-a">
+      Oui. L'activité est un critère important, mais <strong>pas le seul</strong>. Une demande peut être refusée même si tu joues régulièrement, notamment si tu as des <strong>signalements</strong> à ton encontre. La façon dont tu te comportes au sein de la communauté entre également en compte dans l'évaluation.
+    </div>
+  </div>
+
+</div>
+</main>
+
+<div id="footer"></div>
+
+<script src="./js/config.js"></script>
+<script src="./js/data.js"></script>
+<script src="./js/utils.js"></script>
+<script>
+  renderNav('faq');
+  function toggle(el) {
+    el.closest('.faq-item').classList.toggle('open');
+  }
+</script>
+</body>
+</html>

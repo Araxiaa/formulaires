@@ -1,27 +1,20 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Suivi — Le Prix de la Trêve</title>
   <link rel="stylesheet" href="./css/main.css">
+  <script>
+    (function(){
+      var t = localStorage.getItem('lpdt_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="./index.html" class="nav-logo">
-      <span class="nav-logo-mark">⚔</span>
-      <span class="nav-logo-text">Le Prix de la <em>Trêve</em></span>
-    </a>
-    <div class="nav-links">
-      <a href="./index.html"        class="nav-link" data-page="postes">Postes</a>
-      <a href="./candidature.html"  class="nav-link" data-page="candidature">Candidater</a>
-      <a href="./suivi.html"        class="nav-link" data-page="suivi">Mon suivi</a>
-      <a href="./admin.html"        class="nav-link nav-link-admin" data-page="admin">Staff ↗</a>
-    </div>
-  </div>
-</nav>
+<nav class="nav" id="nav"></nav>
 
 <header class="hero">
   <p class="hero-eyebrow">Suivi de candidature</p>
@@ -46,6 +39,8 @@
   <div id="suivi-result" class="hidden"></div>
 
 </main>
+
+<div id="footer"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="./js/config.js"></script>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,23 +39,16 @@
     .role-slot-badge { font-size:10px; padding:2px 7px; border-radius:20px; background:var(--bg-card); color:var(--text-3); border:1px solid var(--border); margin-left:auto; }
     .no-role-hint { color:var(--text-3); font-size:13px; text-align:center; padding:1.5rem; background:var(--bg-surface); border:1px dashed var(--border-s); border-radius:var(--r-card); }
   </style>
+  <script>
+    (function(){
+      var t = localStorage.getItem('lpdt_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="./index.html" class="nav-logo">
-      <span class="nav-logo-mark">⚔</span>
-      <span class="nav-logo-text">Le Prix de la <em>Trêve</em></span>
-    </a>
-    <div class="nav-links">
-      <a href="./index.html"        class="nav-link" data-page="postes">Postes</a>
-      <a href="./candidature.html"  class="nav-link" data-page="candidature">Candidater</a>
-      <a href="./suivi.html"        class="nav-link" data-page="suivi">Mon suivi</a>
-      <a href="./admin.html"        class="nav-link nav-link-admin" data-page="admin">Staff ↗</a>
-    </div>
-  </div>
-</nav>
+<nav class="nav" id="nav"></nav>
 
 <header class="hero">
   <p class="hero-eyebrow">Formulaire de candidature</p>
@@ -93,7 +86,7 @@
 
       <div class="form-group">
         <label class="form-label" for="s-presentation">Présentation personnelle</label>
-        <textarea id="s-presentation" rows="5"
+        <textarea id="s-presentation" rows="5" data-min="60"
           placeholder="Présente-toi en quelques lignes : qui tu es, depuis combien de temps tu fais du roleplay, ta place dans la communauté, et ce qui te motive à rejoindre l'équipe staff du Prix de la Trêve."></textarea>
       </div>
 
@@ -105,13 +98,13 @@
 
       <div class="form-group">
         <label class="form-label" for="s-experience">Expérience staff sur d'autres serveurs</label>
-        <textarea id="s-experience" rows="3"
+        <textarea id="s-experience" rows="3" data-min="0"
           placeholder="As-tu déjà occupé un rôle staff sur d'autres serveurs Discord ? Si oui, décris tes missions et durée. Si non, explique ce qui te prépare à assumer ce type de responsabilité."></textarea>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="s-qualites">Quelles qualités te distinguent et feraient de toi un·e bon·ne staff ?</label>
-        <textarea id="s-qualites" rows="4"
+        <textarea id="s-qualites" rows="4" data-min="30"
           placeholder="Rigueur, créativité, empathie, sens de l'organisation… Illustre avec des exemples concrets si possible."></textarea>
       </div>
 
@@ -155,7 +148,7 @@
       </div>
 
       <div style="margin-top:1.5rem;">
-        <button type="button" class="btn btn-primary" onclick="submitStaff()">Envoyer ma candidature →</button>
+        <button type="button" class="btn btn-primary" onclick="previewForm('staff')">Envoyer ma candidature →</button>
       </div>
 
     </form>
@@ -201,13 +194,13 @@
 
       <div class="form-group">
         <label class="form-label" for="hr-activite">Activité roleplay actuelle</label>
-        <textarea id="hr-activite" rows="4"
+        <textarea id="hr-activite" rows="4" data-min="30"
           placeholder="Décris ta fréquence de jeu avec ce personnage : à quelle fréquence joues-tu, quels types de scènes pratiques-tu (solo, duo, collectif), as-tu des fils actifs en ce moment ?"></textarea>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="hr-moti-ooc">Motivation hors-roleplay</label>
-        <textarea id="hr-moti-ooc" rows="5"
+        <textarea id="hr-moti-ooc" rows="5" data-min="50"
           placeholder="Pourquoi souhaites-tu incarner ce rang en tant que joueur·se ? Quelles sont tes intentions narratives, les arcs que tu imagines, la place que tu veux occuper dans la communauté ?"></textarea>
       </div>
 
@@ -231,19 +224,19 @@
 
       <div class="form-group" id="hr-moti-ic-group" style="display:none;">
         <label class="form-label" for="hr-moti-ic">Motivation en roleplay (voix de ton personnage)</label>
-        <textarea id="hr-moti-ic" rows="4"
+        <textarea id="hr-moti-ic" rows="4" data-min="20"
           placeholder="Comment ton personnage envisage-t-il ce rang ? Qu'est-ce qui l'anime, le pousse vers cette responsabilité ? Écris à la première personne ou en description intérieure."></textarea>
       </div>
 
       <div class="form-group" id="hr-extrait-group" style="display:none;">
         <label class="form-label" for="hr-extrait">Extrait roleplay <span style="color:var(--indispo)">*</span></label>
-        <textarea id="hr-extrait" rows="10"
+        <textarea id="hr-extrait" rows="10" data-min="100"
           placeholder="Propose un extrait roleplay de 10 à 20 lignes illustrant ton style d'écriture dans la peau de ce personnage. Il peut s'agir d'une scène de ton choix, inédite ou déjà jouée."></textarea>
         <p class="form-hint">Cet extrait est le principal critère d'évaluation de ta candidature HR.</p>
       </div>
 
       <div id="hr-submit-wrap" style="display:none;">
-        <button type="button" class="btn btn-primary" onclick="submitHR()">Envoyer ma candidature →</button>
+        <button type="button" class="btn btn-primary" onclick="previewForm('hr')">Envoyer ma candidature →</button>
       </div>
 
     </form>
@@ -312,7 +305,7 @@
             <textarea id="oc3-justif" rows="4"
               placeholder="Pourquoi souhaites-tu un 3ème personnage ? Qu'apportera-t-il à ton expérience RP et à la vie du serveur ?"></textarea>
           </div>
-          <button type="button" class="btn btn-primary" onclick="submitOC('oc3')">Envoyer ma demande →</button>
+          <button type="button" class="btn btn-primary" onclick="previewForm('oc3')">Envoyer ma demande →</button>
         </form>
       </div>
 
@@ -375,12 +368,26 @@
               placeholder="Propose un extrait de 5 à 10 lignes incarnant ce nouveau personnage. Une courte scène inédite illustrant sa personnalité ou son rapport au monde."></textarea>
             <p class="form-hint">Cet extrait est obligatoire pour une demande de 4ème OC.</p>
           </div>
-          <button type="button" class="btn btn-primary" onclick="submitOC('oc4')">Envoyer ma demande →</button>
+          <button type="button" class="btn btn-primary" onclick="previewForm('oc4')">Envoyer ma demande →</button>
         </form>
       </div>
 
     </div>
   </div>
+
+
+<!-- Modale prévisualisation -->
+<div class="modal-overlay" id="modal-preview">
+  <div class="modal-box" style="max-width:640px;max-height:85vh;overflow-y:auto;">
+    <h2 class="modal-title">Vérifier ta candidature</h2>
+    <p class="modal-sub" style="margin-bottom:1rem;">Relis tes réponses avant d'envoyer. Une fois soumise, la candidature ne peut plus être modifiée.</p>
+    <div id="preview-content"></div>
+    <div class="modal-actions" style="margin-top:1.25rem;position:sticky;bottom:0;background:var(--bg-card);padding:.75rem 0 0;">
+      <button class="btn btn-primary" id="preview-confirm-btn">Confirmer et envoyer →</button>
+      <button class="btn btn-ghost"   onclick="closePreview()">Modifier</button>
+    </div>
+  </div>
+</div>
 
 </main>
 
@@ -390,5 +397,6 @@
 <script src="./js/utils.js"></script>
 <script src="./js/candidature.js"></script>
 <script src="./js/autosave.js"></script>
+  <div id="footer"></div>
 </body>
 </html>
