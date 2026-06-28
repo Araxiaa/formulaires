@@ -253,7 +253,7 @@ function getRangType(rangNom) {
 // Init
 // -----------------------------------------------
 (async function init() {
-  setActiveNav('candidature');
+  renderNav('candidature');
   await Promise.all([loadStaffPostes(), loadHRPostes()]);
   prefillFromUrl();
 })();
@@ -498,6 +498,23 @@ function validateSpecificAnswers(roleId, slot) {
 }
 
 // -----------------------------------------------
+// Protection anti-doublon
+// -----------------------------------------------
+async function checkDuplicate(pseudo, type, posteId) {
+  let query = sb.from('candidatures')
+    .select('id, statut')
+    .eq('pseudo_discord', pseudo)
+    .eq('type', type)
+    .not('statut', 'in', '(refusee,retiree)');
+
+  // Pour Staff et HR, vérifier aussi le poste spécifique
+  if (posteId !== null) query = query.eq('poste_id', posteId);
+
+  const { data } = await query.limit(1);
+  return data && data.length > 0;
+}
+
+// -----------------------------------------------
 // Soumission Staff
 // -----------------------------------------------
 async function submitStaff() {
@@ -535,6 +552,15 @@ async function submitStaff() {
 
   const btn  = document.querySelector('#fv-staff .btn-primary');
   const code = generateCode();
+  setLoading(btn, true, 'Vérification…');
+
+  // Vérification doublon : même pseudo + type staff actif
+  const isDuplicate = await checkDuplicate(pseudo, 'staff', null);
+  if (isDuplicate) {
+    setLoading(btn, false);
+    showToast('Tu as déjà une candidature staff en cours. Consulte la page de suivi.', 'error');
+    return;
+  }
   setLoading(btn, true, 'Envoi en cours…');
 
   // Construction des rôles visés
@@ -647,6 +673,15 @@ async function submitHR() {
 
   const btn  = document.querySelector('#hr-submit-wrap .btn-primary');
   const code = generateCode();
+  setLoading(btn, true, 'Vérification…');
+
+  // Vérification doublon : même pseudo + même rang actif
+  const isDupHR = await checkDuplicate(pseudo, 'hr', parseInt(posteId));
+  if (isDupHR) {
+    setLoading(btn, false);
+    showToast('Tu as déjà une candidature active pour ce rang. Consulte la page de suivi.', 'error');
+    return;
+  }
   setLoading(btn, true, 'Envoi en cours…');
 
   // Collecte des réponses spécifiques
@@ -732,6 +767,15 @@ async function submitOC(num) {
 
   const btn  = document.querySelector(`#form-${num} .btn-primary`);
   const code = generateCode();
+  setLoading(btn, true, 'Vérification…');
+
+  // Vérification doublon : même pseudo + même type OC actif
+  const isDupOC = await checkDuplicate(pseudo, num, null);
+  if (isDupOC) {
+    setLoading(btn, false);
+    showToast('Tu as déjà une demande ' + (num === 'oc3' ? '3ème' : '4ème') + ' OC en cours. Consulte la page de suivi.', 'error');
+    return;
+  }
   setLoading(btn, true, 'Envoi en cours…');
 
   const { error } = await sb.from('candidatures').insert({
@@ -796,3 +840,261 @@ function showSuccess(code, type) {
     </div>
   `;
 }
+
+
+// =========================================================
+// COMPTEUR DE CARACTÈRES
+// =========================================================
+
+function setupCharCounters(root) {
+  (root || document).querySelectorAll('textarea[data-min]').forEach(ta => {
+    // Éviter les doublons
+    if (ta.nextElementSibling?.classList.contains('char-counter')) return;
+
+    const min = parseInt(ta.dataset.min) || 0;
+    const counter = document.createElement('div');
+    counter.className = 'char-counter';
+    ta.parentNode.insertBefore(counter, ta.nextSibling);
+
+    function update() {
+      const len = ta.value.trim().length;
+      if (min > 0) {
+        counter.textContent = `${len} / ${min} caractères minimum`;
+        counter.className = 'char-counter ' + (len >= min ? 'ok' : len >= min * 0.6 ? 'mid' : 'low');
+      } else {
+        counter.textContent = `${len} caractères`;
+        counter.className = 'char-counter';
+      }
+    }
+    ta.addEventListener('input', update);
+    update();
+  });
+}
+
+// Réinitialise les compteurs après rendu dynamique
+const _origOnRole1Change = typeof onRole1Change === 'function' ? onRole1Change : null;
+const _origOnRole2Change = typeof onRole2Change === 'function' ? onRole2Change : null;
+const _origOnRangChange  = typeof onRangChange  === 'function' ? onRangChange  : null;
+
+function onRole1Change() {
+  if (_origOnRole1Change) _origOnRole1Change();
+  setTimeout(() => setupCharCounters(document.getElementById('specific-questions-container')), 80);
+}
+function onRole2Change() {
+  if (_origOnRole2Change) _origOnRole2Change();
+  setTimeout(() => setupCharCounters(document.getElementById('specific-questions-container')), 80);
+}
+function onRangChange() {
+  if (_origOnRangChange) _origOnRangChange();
+  setTimeout(() => setupCharCounters(document.getElementById('hr-specific-container')), 80);
+}
+
+// Initialiser sur chaque onglet visible
+document.addEventListener('DOMContentLoaded', () => {
+  setupCharCounters();
+});
+
+
+// =========================================================
+// PRÉVISUALISATION AVANT ENVOI
+// =========================================================
+
+let _pendingSubmit = null;
+
+function closePreview() {
+  document.getElementById('modal-preview').classList.remove('open');
+  _pendingSubmit = null;
+}
+
+function previewField(label, value, isEmpty) {
+  return `
+    <div class="preview-field">
+      <div class="preview-label">${label}</div>
+      <div class="preview-value${isEmpty ? ' empty' : ''}">${isEmpty ? '— Non renseigné —' : escHtml(value)}</div>
+    </div>`;
+}
+
+function showPreviewModal(sections, confirmFn) {
+  let html = '';
+  sections.forEach(sec => {
+    html += `<div class="preview-section">`;
+    if (sec.title) html += `<div class="preview-section-title">${sec.title}</div>`;
+    if (sec.block) {
+      html += `<div class="preview-role-block"><div class="preview-role-title">${escHtml(sec.block)}</div>`;
+    }
+    sec.fields.forEach(f => {
+      html += previewField(f.label, f.value, !f.value || !f.value.trim());
+    });
+    if (sec.block) html += `</div>`;
+    html += `</div>`;
+  });
+
+  document.getElementById('preview-content').innerHTML = html;
+  document.getElementById('preview-confirm-btn').onclick = async () => {
+    closePreview();
+    if (confirmFn) await confirmFn();
+  };
+  document.getElementById('modal-preview').classList.add('open');
+}
+
+// --- Staff preview ---
+async function previewForm(type) {
+  if (type === 'staff')      await _previewStaff();
+  else if (type === 'hr')    await _previewHR();
+  else if (type === 'oc3' || type === 'oc4') await _previewOC(type);
+}
+
+async function _previewStaff() {
+  const r1 = document.getElementById('s-role-1').value;
+  const pseudo  = document.getElementById('s-pseudo').value.trim();
+  const ancien  = document.getElementById('s-anciennete').value.trim();
+  const presen  = document.getElementById('s-presentation').value.trim();
+  const dispo   = document.getElementById('s-dispo').value.trim();
+  const qualit  = document.getElementById('s-qualites').value.trim();
+  const xp      = document.getElementById('s-experience').value.trim();
+
+  const generalValid = validateFields([
+    { el: document.getElementById('s-pole'),         min: 1  },
+    { el: document.getElementById('s-role-1'),       min: 1  },
+    { el: document.getElementById('s-pseudo'),       min: 2  },
+    { el: document.getElementById('s-anciennete'),   min: 1  },
+    { el: document.getElementById('s-presentation'), min: 60 },
+    { el: document.getElementById('s-dispo'),        min: 3  },
+    { el: document.getElementById('s-qualites'),     min: 30 },
+  ]);
+  let specificValid = true;
+  if (r1) specificValid = validateSpecificAnswers(r1, 1) && specificValid;
+  const r2 = document.getElementById('s-role-2').value;
+  if (r2) specificValid = validateSpecificAnswers(r2, 2) && specificValid;
+
+  if (!generalValid || !specificValid) {
+    showToast('Complète tous les champs obligatoires avant de prévisualiser.', 'error');
+    document.querySelector('.field-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const sections = [
+    {
+      title: 'Informations générales',
+      fields: [
+        { label: 'Pseudo Discord',       value: pseudo  },
+        { label: 'Ancienneté serveur',   value: ancien  },
+        { label: 'Présentation',         value: presen  },
+        { label: 'Disponibilités',       value: dispo   },
+        { label: 'Qualités',             value: qualit  },
+        { label: 'Expérience staff',     value: xp      },
+      ],
+    },
+  ];
+
+  [r1, r2].filter(Boolean).forEach((rid, i) => {
+    const meta  = ROLE_META[rid];
+    const qs    = ROLE_QUESTIONS[rid] || [];
+    const slot  = i + 1;
+    sections.push({
+      block: meta ? meta.label : `Rôle #${rid}`,
+      fields: qs.map(q => ({
+        label: q.label.substring(0, 60) + (q.label.length > 60 ? '…' : ''),
+        value: (document.getElementById(`rq-${slot}-${q.id}`) || {}).value || '',
+      })),
+    });
+  });
+
+  showPreviewModal(sections, () => submitStaff());
+}
+
+async function _previewHR() {
+  const pseudo    = document.getElementById('hr-pseudo').value.trim();
+  const oc        = document.getElementById('hr-oc').value.trim();
+  const rangAct   = document.getElementById('hr-rang-actuel').value.trim();
+  const ancServ   = document.getElementById('hr-anciennete-serveur')?.value.trim() || document.getElementById('hr-anciennete')?.value.trim() || '';
+  const ancOc     = document.getElementById('hr-anciennete-oc')?.value.trim() || '';
+  const activite  = document.getElementById('hr-activite')?.value.trim() || '';
+  const motiOoc   = document.getElementById('hr-moti-ooc').value.trim();
+  const motiIc    = document.getElementById('hr-moti-ic').value.trim();
+  const extrait   = document.getElementById('hr-extrait').value.trim();
+  const posteId   = document.getElementById('hr-poste').value;
+
+  const valid = validateFields([
+    { el: document.getElementById('hr-poste'),  min: 1   },
+    { el: document.getElementById('hr-pseudo'), min: 2   },
+    { el: document.getElementById('hr-oc'),     min: 2   },
+    { el: document.getElementById('hr-moti-ooc'), min: 50 },
+    { el: document.getElementById('hr-extrait'),  min: 100 },
+  ]);
+  if (!valid) { showToast('Complète tous les champs obligatoires avant de prévisualiser.', 'error'); return; }
+
+  const rang     = hrPostes.find(r => r.id == posteId);
+  const rangType = rang ? getRangType(rang.rang) : null;
+  const qs       = rangType ? RANG_QUESTIONS[rangType] : [];
+
+  const sections = [
+    {
+      title: 'Informations générales',
+      fields: [
+        { label: 'Pseudo Discord',        value: pseudo  },
+        { label: 'Personnage (OC)',        value: oc      },
+        { label: 'Rang actuel',           value: rangAct },
+        { label: 'Ancienneté serveur',    value: ancServ },
+        { label: 'Ancienneté du perso',   value: ancOc   },
+        { label: 'Activité RP',           value: activite },
+        { label: 'Motivation OOC',        value: motiOoc },
+      ],
+    },
+    {
+      title: 'Mises en situation',
+      fields: qs.map(q => ({
+        label: q.label.substring(0, 70) + '…',
+        value: (document.getElementById(`hr-sq-${q.id}`) || {}).value || '',
+      })),
+    },
+    {
+      title: 'Roleplay',
+      fields: [
+        { label: 'Motivation IC',  value: motiIc  },
+        { label: 'Extrait RP',    value: extrait  },
+      ],
+    },
+  ];
+
+  showPreviewModal(sections, () => submitHR());
+}
+
+async function _previewOC(num) {
+  const p = id => document.getElementById(`${num}-${id}`);
+  const is4 = num === 'oc4';
+
+  const valid = validateFields([
+    { el: p('pseudo'),      min: 2  },
+    { el: p('anciennete'),  min: 1  },
+    { el: p('ocs-actuels'), min: 5  },
+    { el: p('activite'),    min: 30 },
+    { el: p('clan'),        min: 1  },
+    { el: p('concept'),     min: 50 },
+    { el: p('justif'),      min: 30 },
+    ...(is4 ? [{ el: p('extrait'), min: 80 }] : []),
+  ]);
+  if (!valid) { showToast('Complète tous les champs obligatoires avant de prévisualiser.', 'error'); return; }
+
+  const fields = [
+    { label: 'Pseudo Discord',      value: p('pseudo').value      },
+    { label: 'Ancienneté serveur',  value: p('anciennete').value  },
+    { label: 'OCs actuels',         value: p('ocs-actuels').value },
+    { label: 'Activité RP',         value: p('activite').value    },
+    { label: 'Clan envisagé',       value: p('clan').value        },
+    { label: 'Nom envisagé',        value: p('nom').value || '—'  },
+    { label: 'Concept',             value: p('concept').value     },
+    { label: 'Justification',       value: p('justif').value      },
+    ...(is4 ? [{ label: 'Extrait RP', value: p('extrait').value }] : []),
+  ];
+
+  showPreviewModal(
+    [{ title: num === 'oc3' ? 'Demande 3ème OC' : 'Demande 4ème OC', fields }],
+    () => submitOC(num)
+  );
+}
+
+// Fermer en cliquant l'overlay
+document.getElementById('modal-preview')?.addEventListener('click', function(e) {
+  if (e.target === this) closePreview();
+});

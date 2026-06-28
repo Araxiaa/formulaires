@@ -7,7 +7,16 @@ let attentePosteType = null;
 
 // --- Init ---
 (async function init() {
-  setActiveNav('postes');
+  renderNav('postes');
+
+  // Bouton Discord depuis config
+  const discordBtn = document.getElementById('discord-btn');
+  if (discordBtn && typeof CONFIG !== 'undefined') discordBtn.href = CONFIG.site.discordInvite || '#';
+  const heroDesc = document.getElementById('hero-desc');
+  if (heroDesc && typeof CONFIG !== 'undefined' && CONFIG.site.description) {
+    heroDesc.textContent = CONFIG.site.description + ' Découvre les postes disponibles ci-dessous.';
+  }
+
   await Promise.all([loadStaffPostes(), loadHRPostes()]);
 })();
 
@@ -65,6 +74,7 @@ function renderStaffCard(poste, poleId) {
   const placesTxt = canApply
     ? `${poste.places_dispo} place${poste.places_dispo > 1 ? 's' : ''} disponible${poste.places_dispo > 1 ? 's' : ''} sur ${poste.places_total}`
     : poste.statut === 'complet' ? 'Toutes les places sont occupées' : 'Poste momentanément indisponible';
+  const dureeTxt = canApply && poste.ouvert_le ? formatDuree(poste.ouvert_le) : null;
 
   return `
     <div class="post-card ${poleId}">
@@ -74,6 +84,7 @@ function renderStaffCard(poste, poleId) {
       <span class="badge ${poste.statut}">
         ${STATUT_LABELS[poste.statut]}${canApply ? ' · ' + poste.places_dispo + ' pl.' : ''}
       </span>
+      ${dureeTxt ? `<span class="duree-tag">${dureeTxt}</span>` : ''}
       <div class="card-actions">
         <a href="./candidature.html?type=staff&id=${poste.id}"
            class="btn btn-primary btn-sm ${canApply ? '' : 'btn-disabled'}"
@@ -128,6 +139,7 @@ function renderHRSections(postes) {
 
 function renderHRCard(rang, clan) {
   const canApply = rang.statut === 'ouvert';
+  const dureeHR  = canApply && rang.ouvert_le ? formatDuree(rang.ouvert_le) : null;
   return `
     <div class="post-card ${clan.id}">
       <div class="card-context ${clan.id}">${clan.nom}</div>
@@ -135,6 +147,7 @@ function renderHRCard(rang, clan) {
       ${rang.titulaire ? `<div class="card-titu">↳ ${escHtml(rang.titulaire)}</div>` : ''}
       ${rang.note      ? `<div class="card-note">${escHtml(rang.note)}</div>` : ''}
       <span class="badge ${rang.statut}">${STATUT_LABELS[rang.statut]}</span>
+      ${dureeHR ? `<span class="duree-tag">${dureeHR}</span>` : ''}
       <div class="card-actions">
         <a href="./candidature.html?type=hr&id=${rang.id}"
            class="btn btn-primary btn-sm ${canApply ? '' : ''}"
@@ -198,10 +211,20 @@ async function submitAttente() {
   const btn = document.querySelector('#modal-attente .btn-primary');
   setLoading(btn, true, 'Inscription…');
 
+  // Auto-lookup : si ce pseudo est déjà connu, récupérer son ID Discord
+  let discordId = null;
+  const { data: membreConnu } = await sb
+    .from('membres_discord')
+    .select('discord_id')
+    .eq('pseudo_discord', pseudo)
+    .maybeSingle();
+  if (membreConnu?.discord_id) discordId = membreConnu.discord_id;
+
   const { error } = await sb.from('liste_attente').insert({
-    poste_id:      attentePosteId,
-    poste_type:    attentePosteType,
+    poste_id:       attentePosteId,
+    poste_type:     attentePosteType,
     pseudo_discord: pseudo,
+    discord_id:     discordId,
   });
 
   setLoading(btn, false);

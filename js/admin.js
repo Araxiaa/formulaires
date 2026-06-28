@@ -69,7 +69,8 @@ function showPanel(email) {
 // -----------------------------------------------
 
 async function loadAll() {
-  await Promise.all([loadStaff(), loadHR(), loadCandidatures()]);
+  await Promise.all([loadStaff(), loadHR(), loadCandidatures(), loadAttente()]);
+  loadStats();
 }
 
 // -----------------------------------------------
@@ -223,11 +224,12 @@ function renderCandidaturesTable(cands) {
         <td class="td-muted" style="font-size:12px;">${escHtml(getPosteNom(c))}</td>
         <td class="td-muted" style="font-size:11px;">${formatDate(c.created_at)}</td>
         <td>
-          <select class="admin-select" id="cand-statut-${c.id}" onchange="saveCandidatureStatut(${c.id})">
+          <select class="admin-select" id="cand-statut-${c.id}" onchange="saveCandidatureStatut(${c.id})" ${c.statut === 'retiree' ? 'disabled' : ''}>
             <option value="recue"    ${c.statut === 'recue'    ? 'selected' : ''}>Reçue</option>
             <option value="examen"   ${c.statut === 'examen'   ? 'selected' : ''}>En examen</option>
             <option value="acceptee" ${c.statut === 'acceptee' ? 'selected' : ''}>Acceptée</option>
             <option value="refusee"  ${c.statut === 'refusee'  ? 'selected' : ''}>Refusée</option>
+            ${c.statut === 'retiree' ? '<option value="retiree" selected>Retirée</option>' : ''}
           </select>
         </td>
         <td><button class="btn btn-ghost btn-sm" onclick="showDetail(${c.id})">Lire →</button></td>
@@ -260,9 +262,19 @@ async function saveCandidatureStatut(id) {
   const newStatut = document.getElementById(`cand-statut-${id}`).value;
   const { error } = await sb.from('candidatures').update({ statut: newStatut }).eq('id', id);
   if (error) { showToast('Erreur mise à jour statut.', 'error'); return; }
+
   const idx = allCandidatures.findIndex(c => c.id === id);
   if (idx !== -1) allCandidatures[idx].statut = newStatut;
   showToast(`Statut mis à jour : ${STATUT_LABELS[newStatut]}`, 'success');
+
+  // Notification Discord automatique pour les décisions finales
+  if (newStatut === 'acceptee' || newStatut === 'refusee') {
+    const cand     = allCandidatures.find(c => c.id === id);
+    const posteNom = cand ? getPosteNom(cand) : '—';
+    const embed    = buildDecisionEmbed(cand, newStatut, posteNom);
+    await sendDiscordWebhook(CONFIG.discord.webhookNotifCandidats, { embeds: [embed] });
+    showToast('Notification Discord envoyée.', 'info');
+  }
 }
 
 // -----------------------------------------------
@@ -346,7 +358,21 @@ function showDetail(id) {
         <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius);padding:.875rem;font-size:13px;color:var(--text-2);line-height:1.7;white-space:pre-wrap;">${escHtml(v || '—')}</div>
       </div>`).join('')}
   `;
+  // Ajouter la section notes
+  const dc = document.getElementById('detail-content');
+  if (dc) {
+    dc.innerHTML += `
+      <div class="notes-section">
+        <div class="notes-title">Notes internes staff</div>
+        <div id="notes-list-${cand.id}"><div style="font-size:12px;color:var(--text-3);">Chargement…</div></div>
+        <div class="notes-add">
+          <textarea id="note-input-${cand.id}" placeholder="Ajouter une note interne visible uniquement par le staff…"></textarea>
+          <button id="note-btn-${cand.id}" class="btn btn-ghost btn-sm" style="align-self:flex-end;" onclick="addNote(${cand.id})">Ajouter la note</button>
+        </div>
+      </div>`;
+  }
   document.getElementById('modal-detail').classList.add('open');
+  loadNotes(cand.id);
 }
 
 function closeDetailModal() {
@@ -354,18 +380,257 @@ function closeDetailModal() {
 }
 
 // -----------------------------------------------
-// Notification liste d'attente → Discord
+// -----------------------------------------------
+// Notification liste d'attente → Discord (améliorée)
 // -----------------------------------------------
 
 async function notifyWaitlist(posteId, posteType, posteNom) {
-  const { data: entries } = await sb.from('liste_attente').select('id, pseudo_discord')
-    .eq('poste_id', posteId).eq('poste_type', posteType).eq('notifie', false);
-  if (!entries || !entries.length) return;
+  const { data: entries } = await sb
+    .from('liste_attente')
+    .select('id, pseudo_discord, discord_id')
+    .eq('poste_id', posteId)
+    .eq('poste_type', posteType)
+    .eq('notifie', false);
 
-  const pseudos = entries.map(e => e.pseudo_discord);
-  const embed   = buildWaitlistNotifEmbed(posteNom, pseudos);
-  await sendDiscordWebhook(CONFIG.discord.webhookAdmin, { embeds: [embed] });
+  if (!entries || !entries.length) {
+    showToast("Aucune personne en liste d'attente pour ce poste.", 'info');
+    return;
+  }
 
+  const withId    = entries.filter(e => e.discord_id);
+  const withoutId = entries.filter(e => !e.discord_id);
+  const mentionContent = [
+    ...withId.map(e => `<@${e.discord_id}>`),
+    ...withoutId.map(e => e.pseudo_discord),
+  ].join(' ');
+
+  // Webhook public (salon membres) — vraies mentions Discord
+  const siteUrl = CONFIG.site?.url || '';
+  const publicPayload = {
+    content: `\uD83D\uDD14 ${mentionContent}`,
+    embeds: [{
+      title: `\uD83D\uDFE2 Poste ouvert \u2014 ${posteNom}`,
+      description: `Le poste **${posteNom}** est maintenant ouvert aux candidatures !`,
+      color: 0x4aaa80,
+      fields: [
+        { name: 'Candidater', value: `[Acc\u00e9der au formulaire](${siteUrl}/candidature.html)`, inline: true },
+        ...(withoutId.length ? [{
+          name: '\u26A0\uFE0F Sans ID Discord (pinger manuellement)',
+          value: withoutId.map(e => e.pseudo_discord).join(', '),
+          inline: false,
+        }] : []),
+      ],
+      footer: { text: `Le Prix de la Tr\u00eave \u00b7 ${new Date().toLocaleDateString('fr-FR')}` },
+      timestamp: new Date().toISOString(),
+    }],
+  };
+  await sendDiscordWebhook(CONFIG.discord.webhookOuvertures, publicPayload);
+
+  // Webhook admin — résumé interne
+  const adminEmbed = buildWaitlistNotifEmbed(posteNom, entries.map(e =>
+    e.discord_id ? `<@${e.discord_id}> (${e.pseudo_discord})` : e.pseudo_discord
+  ));
+  await sendDiscordWebhook(CONFIG.discord.webhookAdmin, { embeds: [adminEmbed] });
+
+  // Marquer notifiés
   await sb.from('liste_attente').update({ notifie: true }).in('id', entries.map(e => e.id));
-  showToast(`${pseudos.length} personne(s) à notifier sur Discord.`, 'info');
+  showToast(`${entries.length} personne(s) notifi\u00e9e(s) sur Discord.`, 'success');
+  await loadAttente();
+}
+
+// -----------------------------------------------
+// Gestion des listes d'attente dans le panel admin
+// -----------------------------------------------
+
+let attenteEntries = [];
+
+async function loadAttente() {
+  const { data } = await sb
+    .from('liste_attente')
+    .select('id, pseudo_discord, discord_id, poste_id, poste_type, notifie, created_at')
+    .eq('notifie', false)
+    .order('created_at', { ascending: true });
+
+  attenteEntries = data || [];
+  const count = document.getElementById('attente-count');
+  if (count) count.textContent = attenteEntries.length ? `(${attenteEntries.length})` : '';
+  renderAttenteTable(attenteEntries);
+}
+
+function renderAttenteTable(entries) {
+  const tbody = document.getElementById('admin-attente-tbody');
+  if (!tbody) return;
+  if (!entries.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="td-muted">Aucune inscription en attente.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = entries.map(e => {
+    const posteNom = getAttentePosteNom(e);
+    const hasValidId = e.discord_id && /^\d{17,19}$/.test(e.discord_id);
+    return `
+      <tr id="attente-row-${e.id}">
+        <td style="font-weight:500;">${escHtml(e.pseudo_discord)}</td>
+        <td>
+          <input type="text" class="admin-input-inline" style="width:190px;border-color:${hasValidId ? 'var(--ouvert)' : ''};"
+            id="attente-id-${e.id}"
+            value="${escHtml(e.discord_id || '')}"
+            placeholder="ex : 123456789012345678">
+        </td>
+        <td class="td-muted">${escHtml(posteNom)}</td>
+        <td class="td-muted" style="font-size:11px;">${formatDate(e.created_at)}</td>
+        <td>
+          <button class="btn btn-primary btn-sm" onclick="saveAttenteId(${e.id}, '${escHtml(e.pseudo_discord)}')">
+            Enregistrer
+          </button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function getAttentePosteNom(entry) {
+  if (entry.poste_type === 'staff') {
+    const p = staffPostes.find(x => x.id === entry.poste_id);
+    if (p) { const pole = POLES.find(x => x.id === p.pole); return `${p.nom}${pole ? ' \u2014 ' + pole.nom : ''}`; }
+  } else if (entry.poste_type === 'hr') {
+    const r = hrPostes.find(x => x.id === entry.poste_id);
+    if (r) { const clan = CLANS.find(c => c.id === r.clan); return `${r.rang}${clan ? ' \u2014 ' + clan.nom : ''}`; }
+  }
+  return `Poste #${entry.poste_id}`;
+}
+
+async function saveAttenteId(id, pseudo) {
+  const input     = document.getElementById(`attente-id-${id}`);
+  const discordId = input.value.trim();
+
+  if (discordId && !/^\d{17,19}$/.test(discordId)) {
+    showToast("L'ID Discord doit contenir 17 \u00e0 19 chiffres.", 'error');
+    input.style.borderColor = 'var(--indispo)';
+    return;
+  }
+
+  const btn = document.querySelector(`#attente-row-${id} .btn-primary`);
+  setLoading(btn, true, '\u2026');
+
+  const { error } = await sb.from('liste_attente')
+    .update({ discord_id: discordId || null })
+    .eq('id', id);
+
+  if (error) { setLoading(btn, false); showToast('Erreur lors de la sauvegarde.', 'error'); return; }
+
+  // M\u00e9moriser dans membres_discord pour les prochaines fois
+  if (discordId) {
+    await sb.from('membres_discord').upsert(
+      { pseudo_discord: pseudo, discord_id: discordId },
+      { onConflict: 'pseudo_discord' }
+    );
+  }
+
+  const idx = attenteEntries.findIndex(e => e.id === id);
+  if (idx !== -1) attenteEntries[idx].discord_id = discordId || null;
+
+  setLoading(btn, false);
+  input.style.borderColor = discordId ? 'var(--ouvert)' : '';
+  showToast(discordId ? `ID enregistr\u00e9 pour ${pseudo}. M\u00e9moris\u00e9 pour les prochaines fois.` : 'ID supprim\u00e9.', 'success');
+}
+
+
+// =========================================================
+// STATISTIQUES LÉGÈRES
+// =========================================================
+
+async function loadStats() {
+  const now       = new Date();
+  const startMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+  // Candidatures ce mois
+  const { count: moisCount } = await sb
+    .from('candidatures')
+    .select('*', { count: 'exact', head: true })
+    .gte('created_at', startMonth);
+
+  // En attente de décision
+  const { count: pendingCount } = await sb
+    .from('candidatures')
+    .select('*', { count: 'exact', head: true })
+    .in('statut', ['recue', 'examen']);
+
+  // Décisions pour taux + délai
+  const { data: decided } = await sb
+    .from('candidatures')
+    .select('statut, created_at, updated_at')
+    .in('statut', ['acceptee', 'refusee'])
+    .limit(200);
+
+  const taux = decided?.length
+    ? Math.round(decided.filter(d => d.statut === 'acceptee').length / decided.length * 100)
+    : null;
+
+  const delaiMoyen = decided?.length
+    ? Math.round(decided.reduce((acc, d) => {
+        return acc + (new Date(d.updated_at) - new Date(d.created_at)) / 86400000;
+      }, 0) / decided.length)
+    : null;
+
+  const el = id => document.getElementById(id);
+  if (el('stat-mois'))    el('stat-mois').textContent    = moisCount    ?? '—';
+  if (el('stat-taux'))    el('stat-taux').textContent    = taux != null  ? taux + '%' : '—';
+  if (el('stat-delai'))   el('stat-delai').textContent   = delaiMoyen != null ? delaiMoyen + ' j.' : '—';
+  if (el('stat-attente')) el('stat-attente').textContent = pendingCount ?? '—';
+}
+
+
+// =========================================================
+// NOTES INTERNES STAFF
+// =========================================================
+
+async function loadNotes(candidatureId) {
+  const container = document.getElementById(`notes-list-${candidatureId}`);
+  if (!container) return;
+
+  const { data, error } = await sb
+    .from('notes_candidatures')
+    .select('*')
+    .eq('candidature_id', candidatureId)
+    .order('created_at');
+
+  if (error || !data?.length) {
+    container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:.5rem 0;">Aucune note pour l\'instant.</div>';
+    return;
+  }
+
+  container.innerHTML = data.map(n => `
+    <div class="note-item">
+      <div class="note-meta">
+        <strong>${escHtml(n.auteur)}</strong>
+        <span>·</span>
+        <span>${formatDate(n.created_at, true)}</span>
+      </div>
+      <div class="note-content">${escHtml(n.contenu)}</div>
+    </div>
+  `).join('');
+}
+
+async function addNote(candidatureId) {
+  const input   = document.getElementById(`note-input-${candidatureId}`);
+  const contenu = input?.value.trim();
+  if (!contenu) return;
+
+  const { data: { session } } = await sb.auth.getSession();
+  const auteur = session?.user?.email || 'Staff';
+
+  const btn = document.getElementById(`note-btn-${candidatureId}`);
+  setLoading(btn, true, '…');
+
+  const { error } = await sb.from('notes_candidatures').insert({
+    candidature_id: candidatureId,
+    auteur,
+    contenu,
+  });
+
+  setLoading(btn, false);
+  if (error) { showToast('Erreur lors de l\'ajout de la note.', 'error'); return; }
+
+  input.value = '';
+  showToast('Note ajoutée.', 'success');
+  await loadNotes(candidatureId);
 }

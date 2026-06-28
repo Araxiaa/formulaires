@@ -38,6 +38,7 @@ const STATUT_LABELS = {
   examen:      'En cours d\'examen',
   acceptee:    'Acceptée',
   refusee:     'Refusée',
+  retiree:     'Retirée',
 };
 
 const POLE_LABELS = {
