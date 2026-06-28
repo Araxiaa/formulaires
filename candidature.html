@@ -5,6 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Candidature — Le Prix de la Trêve</title>
   <link rel="stylesheet" href="./css/main.css">
+  <style>
+    /* --- OC tabs --- */
+    .oc-tabs { display:flex; gap:3px; background:var(--bg-page); border:1px solid var(--border); border-radius:var(--radius); padding:3px; margin-bottom:1.5rem; width:fit-content; }
+    .oc-tab  { padding:6px 18px; border-radius:calc(var(--radius) - 2px); font-size:12px; font-weight:500; color:var(--text-2); background:none; border:none; cursor:pointer; transition:all .15s; }
+    .oc-tab:hover { color:var(--text-1); }
+    .oc-tab.active { background:var(--bg-card); color:var(--text-1); }
+    .oc-tab.oc3.active { color:var(--guide);     }
+    .oc-tab.oc4.active { color:var(--narration); }
+    .oc-subview { display:none; }
+    .oc-subview.active { display:block; }
+    .oc-info-banner { background:var(--bg-surface); border:1px solid var(--border-s); border-left:3px solid; border-radius:var(--radius); padding:1rem 1.125rem; margin-bottom:1.5rem; font-size:13px; color:var(--text-2); line-height:1.65; }
+    .oc-info-banner.oc3 { border-left-color:var(--guide);     }
+    .oc-info-banner.oc4 { border-left-color:var(--narration); }
+    .oc-info-banner strong { color:var(--text-1); }
+    .difficulty-tag { display:inline-flex; align-items:center; font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:3px 8px; border-radius:20px; margin-bottom:.75rem; }
+    .difficulty-tag.standard { background:var(--guide-bg);     color:var(--guide);     }
+    .difficulty-tag.exigeant { background:var(--narration-bg); color:var(--narration); }
+
+    /* --- Staff : séparateurs de section --- */
+    .form-part-title { font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--text-3); margin:1.75rem 0 1rem; padding-bottom:.5rem; border-bottom:1px solid var(--border); }
+    .form-part-title:first-child { margin-top:0; }
+
+    /* --- Questions spécifiques au rôle --- */
+    .role-specific-block { background:var(--bg-surface); border:1px solid var(--border-s); border-radius:var(--r-card); padding:1.25rem; margin-bottom:1rem; animation:fadeIn .2s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+    .role-block-header { display:flex; align-items:center; gap:10px; margin-bottom:1.25rem; padding-bottom:.75rem; border-bottom:1px solid var(--border); }
+    .role-block-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .role-block-dot.guide     { background:var(--guide);     }
+    .role-block-dot.narration { background:var(--narration); }
+    .role-block-dot.batisseur { background:var(--batisseur); }
+    .role-block-title { font-size:13px; font-weight:600; color:var(--text-1); }
+    .role-slot-badge { font-size:10px; padding:2px 7px; border-radius:20px; background:var(--bg-card); color:var(--text-3); border:1px solid var(--border); margin-left:auto; }
+    .no-role-hint { color:var(--text-3); font-size:13px; text-align:center; padding:1.5rem; background:var(--bg-surface); border:1px dashed var(--border-s); border-radius:var(--r-card); }
+  </style>
 </head>
 <body>
 
@@ -26,42 +60,26 @@
 <header class="hero">
   <p class="hero-eyebrow">Formulaire de candidature</p>
   <h1 class="hero-title">Pose ta candidature</h1>
-  <p class="hero-sub">Choisis le type de candidature ci-dessous et remplis le formulaire correspondant.</p>
+  <p class="hero-sub">Choisis le type de candidature et remplis le formulaire correspondant avec soin.</p>
 </header>
 
 <main class="main">
 
-  <!-- Onglets Staff / Hauts Rangs -->
   <div class="form-tabs">
     <button class="form-tab active" data-tab="staff" onclick="switchTab('staff', this)">Staff</button>
     <button class="form-tab"        data-tab="hr"    onclick="switchTab('hr', this)">Hauts Rangs</button>
+    <button class="form-tab"        data-tab="oc"    onclick="switchTab('oc', this)">OC supplémentaire</button>
   </div>
 
-  <!-- ===========================
+  <!-- ============================
        FORMULAIRE STAFF
-  ============================ -->
+  ============================= -->
   <div class="form-view active" id="fv-staff">
     <div class="selected-post-banner" id="banner-staff"></div>
+    <form class="form-section" id="form-staff" onsubmit="return false;" style="max-width:600px;">
 
-    <form class="form-section" id="form-staff" onsubmit="return false;">
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="s-pole">Pôle visé</label>
-          <select id="s-pole" onchange="updateRoleOptions()">
-            <option value="">— Sélectionner un pôle —</option>
-            <option value="guide">Pôle Guide</option>
-            <option value="narration">Pôle Narration</option>
-            <option value="batisseur">Pôle Bâtisseur</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="s-role">Rôle visé</label>
-          <select id="s-role">
-            <option value="">— Sélectionner d'abord un pôle —</option>
-          </select>
-        </div>
-      </div>
+      <!-- PARTIE 1 — Général -->
+      <div class="form-part-title">Informations générales</div>
 
       <div class="form-group">
         <label class="form-label" for="s-pseudo">Pseudo Discord</label>
@@ -74,45 +92,85 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="s-motivation">Présente-toi et motive ta candidature</label>
-        <textarea id="s-motivation" rows="6"
-          placeholder="Parle-nous de toi, de tes points forts et de ce qui te motive à rejoindre cette équipe. Qu'est-ce que tu apporterais à ce pôle ?"></textarea>
+        <label class="form-label" for="s-presentation">Présentation personnelle</label>
+        <textarea id="s-presentation" rows="5"
+          placeholder="Présente-toi en quelques lignes : qui tu es, depuis combien de temps tu fais du roleplay, ta place dans la communauté, et ce qui te motive à rejoindre l'équipe staff du Prix de la Trêve."></textarea>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="s-dispo">Disponibilités hebdomadaires</label>
         <input type="text" id="s-dispo" placeholder="ex : soirs en semaine + journée le week-end">
-        <p class="form-hint">Un minimum de 5h par semaine est requis pour la plupart des postes staff.</p>
+        <p class="form-hint">Un minimum de 5h par semaine est requis pour la plupart des postes.</p>
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="s-experience">Expérience staff (facultatif)</label>
+        <label class="form-label" for="s-experience">Expérience staff sur d'autres serveurs</label>
         <textarea id="s-experience" rows="3"
-          placeholder="As-tu déjà occupé un rôle staff sur d'autres serveurs Discord ? Si oui, décris brièvement tes expériences."></textarea>
+          placeholder="As-tu déjà occupé un rôle staff sur d'autres serveurs Discord ? Si oui, décris tes missions et durée. Si non, explique ce qui te prépare à assumer ce type de responsabilité."></textarea>
       </div>
 
-      <button type="button" class="btn btn-primary" onclick="submitStaff()">
-        Envoyer ma candidature →
-      </button>
+      <div class="form-group">
+        <label class="form-label" for="s-qualites">Quelles qualités te distinguent et feraient de toi un·e bon·ne staff ?</label>
+        <textarea id="s-qualites" rows="4"
+          placeholder="Rigueur, créativité, empathie, sens de l'organisation… Illustre avec des exemples concrets si possible."></textarea>
+      </div>
+
+      <!-- PARTIE 2 — Choix des rôles -->
+      <div class="form-part-title">Rôle(s) visé(s)</div>
+      <p class="form-hint" style="margin-bottom:1rem;">Tu peux choisir jusqu'à deux rôles. Des questions spécifiques apparaîtront pour chaque choix.</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="s-role-1">Premier rôle <span style="color:var(--indispo)">*</span></label>
+          <select id="s-role-1" onchange="onRole1Change()">
+            <option value="">— Sélectionner un rôle —</option>
+            <optgroup label="── Pôle Guide ──">
+              <option value="1">Parrain / Marraine</option>
+              <option value="2">Régisseur·se fiche</option>
+              <option value="3">Généticien·ne</option>
+              <option value="4">Animateur·rice</option>
+            </optgroup>
+            <optgroup label="── Pôle Narration ──">
+              <option value="5">Gestion RP</option>
+              <option value="6">Plume</option>
+              <option value="7">Gestion PNJ</option>
+            </optgroup>
+            <optgroup label="── Pôle Bâtisseur ──">
+              <option value="8">Bâtisseur·se</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="s-role-2">Second rôle <span style="color:var(--text-3)">(facultatif)</span></label>
+          <select id="s-role-2" onchange="onRole2Change()">
+            <option value="">— Aucun second rôle —</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- PARTIE 3 — Questions spécifiques (générées dynamiquement) -->
+      <div id="specific-questions-container">
+        <div class="no-role-hint">Sélectionne un rôle ci-dessus pour voir les questions spécifiques.</div>
+      </div>
+
+      <div style="margin-top:1.5rem;">
+        <button type="button" class="btn btn-primary" onclick="submitStaff()">Envoyer ma candidature →</button>
+      </div>
 
     </form>
   </div>
 
-  <!-- ===========================
+
+  <!-- ============================
        FORMULAIRE HAUTS RANGS
-  ============================ -->
+  ============================= -->
   <div class="form-view" id="fv-hr">
     <div class="selected-post-banner" id="banner-hr"></div>
+    <form class="form-section" id="form-hr" onsubmit="return false;" style="max-width:600px;">
 
-    <form class="form-section" id="form-hr" onsubmit="return false;">
-
-      <div class="form-group">
-        <label class="form-label" for="hr-poste">Rang visé</label>
-        <select id="hr-poste">
-          <option value="">Chargement des postes…</option>
-        </select>
-        <p class="form-hint">Seuls les rangs actuellement ouverts apparaissent dans cette liste.</p>
-      </div>
+      <!-- PARTIE 1 — Général -->
+      <div class="form-part-title">Informations générales</div>
 
       <div class="form-group">
         <label class="form-label" for="hr-pseudo">Pseudo Discord</label>
@@ -121,45 +179,207 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label" for="hr-oc">Nom de ton personnage (OC)</label>
+          <label class="form-label" for="hr-oc">Nom du personnage (OC)</label>
           <input type="text" id="hr-oc" placeholder="Nom complet de l'OC">
         </div>
         <div class="form-group">
           <label class="form-label" for="hr-rang-actuel">Rang actuel du personnage</label>
-          <input type="text" id="hr-rang-actuel" placeholder="ex : Guerrier·ère">
+          <input type="text" id="hr-rang-actuel" placeholder="ex : Guerrier·ère, Chasseur·se…">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="hr-anciennete-serveur">Ancienneté sur le serveur</label>
+          <input type="text" id="hr-anciennete-serveur" placeholder="ex : 8 mois, 1 an…">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="hr-anciennete-oc">Ancienneté de ce personnage</label>
+          <input type="text" id="hr-anciennete-oc" placeholder="ex : 6 mois, depuis le lancement…">
         </div>
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="hr-anciennete">Depuis combien de temps joues-tu ce personnage ?</label>
-        <input type="text" id="hr-anciennete" placeholder="ex : 6 mois, depuis le lancement…">
-        <p class="form-hint">Un minimum d'ancienneté sur le serveur peut être requis selon le rang.</p>
+        <label class="form-label" for="hr-activite">Activité roleplay actuelle</label>
+        <textarea id="hr-activite" rows="4"
+          placeholder="Décris ta fréquence de jeu avec ce personnage : à quelle fréquence joues-tu, quels types de scènes pratiques-tu (solo, duo, collectif), as-tu des fils actifs en ce moment ?"></textarea>
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="hr-moti-ooc">Motivation hors-roleplay (joueur·se)</label>
+        <label class="form-label" for="hr-moti-ooc">Motivation hors-roleplay</label>
         <textarea id="hr-moti-ooc" rows="5"
-          placeholder="Pourquoi souhaites-tu incarner ce rang ? Quelles sont tes intentions narratives ? Comment comptes-tu t'investir dans la vie du clan et dans les intrigues collectives ?"></textarea>
+          placeholder="Pourquoi souhaites-tu incarner ce rang en tant que joueur·se ? Quelles sont tes intentions narratives, les arcs que tu imagines, la place que tu veux occuper dans la communauté ?"></textarea>
       </div>
 
+      <!-- PARTIE 2 — Rang visé + questions spécifiques -->
+      <div class="form-part-title">Rang visé & mises en situation</div>
+      <p class="form-hint" style="margin-bottom:1rem;">Sélectionne le rang que tu vises. Des questions de mise en situation apparaîtront pour évaluer ta capacité à l'incarner.</p>
+
       <div class="form-group">
+        <label class="form-label" for="hr-poste">Rang visé <span style="color:var(--indispo)">*</span></label>
+        <select id="hr-poste" onchange="onRangChange()">
+          <option value="">Chargement des rangs ouverts…</option>
+        </select>
+        <p class="form-hint">Seuls les rangs actuellement ouverts apparaissent ici.</p>
+      </div>
+
+      <!-- Questions spécifiques au rang (dynamiques) -->
+      <div id="hr-specific-container"></div>
+
+      <!-- PARTIE 3 — RP -->
+      <div class="form-part-title" id="hr-rp-title" style="display:none;">Roleplay</div>
+
+      <div class="form-group" id="hr-moti-ic-group" style="display:none;">
         <label class="form-label" for="hr-moti-ic">Motivation en roleplay (voix de ton personnage)</label>
         <textarea id="hr-moti-ic" rows="4"
-          placeholder="Comment ton personnage envisage-t-il ce rôle ? Qu'est-ce qui le/la pousse à aspirer à cette position au sein du Clan ?"></textarea>
+          placeholder="Comment ton personnage envisage-t-il ce rang ? Qu'est-ce qui l'anime, le pousse vers cette responsabilité ? Écris à la première personne ou en description intérieure."></textarea>
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="hr-extrait">Extrait roleplay</label>
+      <div class="form-group" id="hr-extrait-group" style="display:none;">
+        <label class="form-label" for="hr-extrait">Extrait roleplay <span style="color:var(--indispo)">*</span></label>
         <textarea id="hr-extrait" rows="10"
           placeholder="Propose un extrait roleplay de 10 à 20 lignes illustrant ton style d'écriture dans la peau de ce personnage. Il peut s'agir d'une scène de ton choix, inédite ou déjà jouée."></textarea>
-        <p class="form-hint">Cet extrait nous permet d'évaluer ton style d'écriture et ton incarnation du personnage.</p>
+        <p class="form-hint">Cet extrait est le principal critère d'évaluation de ta candidature HR.</p>
       </div>
 
-      <button type="button" class="btn btn-primary" onclick="submitHR()">
-        Envoyer ma candidature →
-      </button>
+      <div id="hr-submit-wrap" style="display:none;">
+        <button type="button" class="btn btn-primary" onclick="submitHR()">Envoyer ma candidature →</button>
+      </div>
 
     </form>
+  </div>
+
+
+  <!-- ============================
+       OC SUPPLÉMENTAIRE
+  ============================= -->
+  <div class="form-view" id="fv-oc">
+    <div class="form-section">
+      <div class="oc-tabs">
+        <button class="oc-tab oc3 active" onclick="switchOCTab('oc3', this)">3ème OC</button>
+        <button class="oc-tab oc4"        onclick="switchOCTab('oc4', this)">4ème OC</button>
+      </div>
+
+      <!-- 3ème OC -->
+      <div class="oc-subview active" id="oc3-view">
+        <span class="difficulty-tag standard">Demande standard</span>
+        <div class="oc-info-banner oc3">
+          <strong>3ème personnage</strong><br>
+          Tu dois justifier d'une ancienneté suffisante sur le serveur, d'une activité régulière avec tes deux OCs actuels,
+          ainsi que d'un concept cohérent et d'une justification sérieuse pour ce nouveau personnage.
+        </div>
+        <form id="form-oc3" onsubmit="return false;">
+          <div class="form-group">
+            <label class="form-label" for="oc3-pseudo">Pseudo Discord</label>
+            <input type="text" id="oc3-pseudo" placeholder="ton pseudo Discord">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="oc3-anciennete">Depuis combien de temps es-tu membre du serveur ?</label>
+            <input type="text" id="oc3-anciennete" placeholder="ex : 10 mois, 1 an et demi…">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="oc3-ocs-actuels">Tes OCs actuels</label>
+            <textarea id="oc3-ocs-actuels" rows="3"
+              placeholder="Liste tes 2 personnages actuels : nom, clan, rang.&#10;ex : Lueur de Givre — Clan de l'Ombre — Guerrière"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="oc3-activite">Activité roleplay avec tes OCs existants</label>
+            <textarea id="oc3-activite" rows="4"
+              placeholder="À quelle fréquence joues-tu avec chacun de tes personnages actuels ? Décris ton niveau d'implication RP (scènes récentes, fils actifs, interactions…)."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="oc3-clan">Clan envisagé pour le nouvel OC</label>
+              <select id="oc3-clan">
+                <option value="">— Sélectionner —</option>
+                <option value="tonnerre">Clan du Tonnerre</option>
+                <option value="vent">Clan du Vent</option>
+                <option value="ombre">Clan de l'Ombre</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="oc3-nom">Nom envisagé (facultatif)</label>
+              <input type="text" id="oc3-nom" placeholder="ex : Braise de Cendre">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="oc3-concept">Concept du personnage</label>
+            <textarea id="oc3-concept" rows="5"
+              placeholder="Décris le concept de ton nouveau personnage : personnalité, histoire, ambitions narratives, place envisagée dans le clan…"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="oc3-justif">Justification de ta demande</label>
+            <textarea id="oc3-justif" rows="4"
+              placeholder="Pourquoi souhaites-tu un 3ème personnage ? Qu'apportera-t-il à ton expérience RP et à la vie du serveur ?"></textarea>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="submitOC('oc3')">Envoyer ma demande →</button>
+        </form>
+      </div>
+
+      <!-- 4ème OC -->
+      <div class="oc-subview" id="oc4-view">
+        <span class="difficulty-tag exigeant">Demande exigeante</span>
+        <div class="oc-info-banner oc4">
+          <strong>4ème personnage</strong><br>
+          Cette demande est soumise à des critères stricts. Tu dois démontrer une activité soutenue avec tes <strong>3 OCs actuels</strong>,
+          une ancienneté significative et fournir un extrait roleplay incarnant le nouveau personnage.
+          Les demandes insuffisamment argumentées seront refusées.
+        </div>
+        <form id="form-oc4" onsubmit="return false;">
+          <div class="form-group">
+            <label class="form-label" for="oc4-pseudo">Pseudo Discord</label>
+            <input type="text" id="oc4-pseudo" placeholder="ton pseudo Discord">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="oc4-anciennete">Depuis combien de temps es-tu membre du serveur ?</label>
+            <input type="text" id="oc4-anciennete" placeholder="ex : 2 ans, depuis le lancement…">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="oc4-ocs-actuels">Tes 3 OCs actuels</label>
+            <textarea id="oc4-ocs-actuels" rows="4"
+              placeholder="Liste tes 3 personnages : nom, clan, rang et date approximative de création.&#10;ex : Lueur de Givre — Clan de l'Ombre — Guerrière — depuis mars 2024"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="oc4-activite">Activité détaillée avec chacun de tes 3 OCs</label>
+            <textarea id="oc4-activite" rows="6"
+              placeholder="Pour chaque OC, décris ta fréquence de jeu et tes fils/scènes RP récents. Démontre que tu es actif·ve avec les 3 en parallèle."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="oc4-justif">Justification renforcée</label>
+            <textarea id="oc4-justif" rows="5"
+              placeholder="Pourquoi un 4ème personnage est-il nécessaire ? Argumente en profondeur : projet narratif, place unique, raisons qui justifient cette exception. Convaincs-nous que tu peux gérer 4 OCs activement."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="oc4-clan">Clan envisagé</label>
+              <select id="oc4-clan">
+                <option value="">— Sélectionner —</option>
+                <option value="tonnerre">Clan du Tonnerre</option>
+                <option value="vent">Clan du Vent</option>
+                <option value="ombre">Clan de l'Ombre</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="oc4-nom">Nom envisagé (facultatif)</label>
+              <input type="text" id="oc4-nom" placeholder="ex : Braise de Cendre">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="oc4-concept">Concept détaillé du personnage</label>
+            <textarea id="oc4-concept" rows="6"
+              placeholder="Décris en détail ce personnage : personnalité, passé, défauts, qualités, ambitions RP, arcs narratifs envisagés, liens avec les autres membres…"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="oc4-extrait">Extrait roleplay <span style="color:var(--indispo)">*</span></label>
+            <textarea id="oc4-extrait" rows="8"
+              placeholder="Propose un extrait de 5 à 10 lignes incarnant ce nouveau personnage. Une courte scène inédite illustrant sa personnalité ou son rapport au monde."></textarea>
+            <p class="form-hint">Cet extrait est obligatoire pour une demande de 4ème OC.</p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="submitOC('oc4')">Envoyer ma demande →</button>
+        </form>
+      </div>
+
+    </div>
   </div>
 
 </main>
@@ -169,5 +389,6 @@
 <script src="./js/data.js"></script>
 <script src="./js/utils.js"></script>
 <script src="./js/candidature.js"></script>
+<script src="./js/autosave.js"></script>
 </body>
 </html>
