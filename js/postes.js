@@ -45,7 +45,7 @@ function renderStaffSections(postes) {
     section.className = 'pole-section';
     section.innerHTML = `
       <div class="pole-header">
-        <div class="pole-icon ${pole.id}">◆</div>
+        <div class="pole-icon ${pole.id}"><img src="./img/pole-${pole.id}.png" alt="${pole.nom}" style="width:22px;height:22px;object-fit:contain;"></div>
         <div>
           <div class="pole-nom">${pole.nom}</div>
           <div class="pole-desc">${pole.description}</div>
