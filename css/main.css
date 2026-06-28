@@ -639,3 +639,29 @@ tbody tr:hover td { background: rgba(255,255,255,0.02); }
 .mt-sm { margin-top: 0.5rem; }
 .mt-md { margin-top: 1rem; }
 .mt-lg { margin-top: 1.5rem; }
+
+/* --- Auto-sauvegarde --- */
+.autosave-restore-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: rgba(91, 127, 214, 0.08);
+  border: 1px solid rgba(91, 127, 214, 0.25);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 1.25rem;
+}
+.autosave-indicator {
+  font-size: 11px;
+  color: var(--text-3);
+  text-align: right;
+  margin-top: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.autosave-indicator.visible { opacity: 1; }
