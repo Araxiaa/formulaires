@@ -62,6 +62,7 @@ function showPanel(email) {
   document.getElementById('admin-gate').classList.add('hidden');
   document.getElementById('admin-panel').classList.remove('hidden');
   document.getElementById('admin-user-info').textContent = `Connecté·e en tant que ${email}`;
+  document.querySelector('.sidebar-link[onclick*="dashboard"]')?.classList.add('active');
 }
 
 // -----------------------------------------------
@@ -71,6 +72,7 @@ function showPanel(email) {
 async function loadAll() {
   await Promise.all([loadStaff(), loadHR(), loadCandidatures(), loadAttente()]);
   loadStats();
+  loadDashboard();
 }
 
 // -----------------------------------------------
@@ -213,6 +215,7 @@ function renderCandidaturesTable(cands) {
     tbody.innerHTML = '<tr><td colspan="7" class="td-muted">Aucune candidature pour ces filtres.</td></tr>';
     return;
   }
+  document.getElementById('cand-count').textContent = `${cands.length} résultat${cands.length > 1 ? 's' : ''}`;
   tbody.innerHTML = cands.map(c => {
     const typeLabel = TYPE_LABELS[c.type] || c.type;
     const typeCls   = c.type === 'staff' ? 'ouvert' : c.type === 'hr' ? 'examen' : c.type === 'oc3' ? 'recue' : 'complet';
@@ -223,6 +226,19 @@ function renderCandidaturesTable(cands) {
         <td><span class="badge ${typeCls}" style="font-size:9px;margin:0;">${typeLabel}</span></td>
         <td class="td-muted" style="font-size:12px;">${escHtml(getPosteNom(c))}</td>
         <td class="td-muted" style="font-size:11px;">${formatDate(c.created_at)}</td>
+        <td>
+          <div class="assign-wrap">
+            <input type="text" class="admin-input-inline assign-input"
+              id="assign-${c.id}"
+              value="${escHtml(c.assigne_a || '')}"
+              placeholder="—"
+              onkeydown="if(event.key==='Enter') saveAssignment(${c.id})">
+            <button class="btn btn-ghost btn-sm" style="padding:3px 6px;" onclick="saveAssignment(${c.id})" title="Enregistrer">
+              <i class="ti ti-check" style="font-size:12px;" aria-hidden="true"></i>
+            </button>
+            <span class="assign-saved" id="assign-saved-${c.id}">✓</span>
+          </div>
+        </td>
         <td>
           <select class="admin-select" id="cand-statut-${c.id}" onchange="saveCandidatureStatut(${c.id})" ${c.statut === 'retiree' ? 'disabled' : ''}>
             <option value="recue"    ${c.statut === 'recue'    ? 'selected' : ''}>Reçue</option>
@@ -258,23 +274,128 @@ function getPosteNom(cand) {
   return '—';
 }
 
+// État en cours pour la modale de décision
+let _pendingDecision = null;
+
 async function saveCandidatureStatut(id) {
-  const newStatut = document.getElementById(`cand-statut-${id}`).value;
+  const sel      = document.getElementById(`cand-statut-${id}`);
+  const newStatut = sel.value;
+  const cand     = allCandidatures.find(c => c.id === id);
+
+  // Décisions finales : note obligatoire
+  if (newStatut === 'acceptee' || newStatut === 'refusee') {
+    // Annuler le changement visuel pour l'instant
+    if (cand) sel.value = cand.statut;
+    _pendingDecision = { id, newStatut };
+    openDecisionNoteModal(newStatut);
+    return;
+  }
+
+  await _applyStatutChange(id, newStatut);
+}
+
+async function _applyStatutChange(id, newStatut, note) {
   const { error } = await sb.from('candidatures').update({ statut: newStatut }).eq('id', id);
   if (error) { showToast('Erreur mise à jour statut.', 'error'); return; }
 
   const idx = allCandidatures.findIndex(c => c.id === id);
   if (idx !== -1) allCandidatures[idx].statut = newStatut;
+
+  // Mettre à jour le select dans le tableau
+  const sel = document.getElementById(`cand-statut-${idx >= 0 ? id : id}`);
+  if (sel) sel.value = newStatut;
+
   showToast(`Statut mis à jour : ${STATUT_LABELS[newStatut]}`, 'success');
 
-  // Notification Discord automatique pour les décisions finales
+  // Notification Discord
   if (newStatut === 'acceptee' || newStatut === 'refusee') {
     const cand     = allCandidatures.find(c => c.id === id);
     const posteNom = cand ? getPosteNom(cand) : '—';
     const embed    = buildDecisionEmbed(cand, newStatut, posteNom);
     await sendDiscordWebhook(CONFIG.discord.webhookNotifCandidats, { embeds: [embed] });
-    showToast('Notification Discord envoyée.', 'info');
   }
+}
+
+// --- Modale note obligatoire ---
+function openDecisionNoteModal(statut) {
+  const isAccept = statut === 'acceptee';
+  document.getElementById('decision-note-title').textContent =
+    isAccept ? '✓ Accepter la candidature' : '✕ Refuser la candidature';
+  document.getElementById('decision-note-sub').textContent =
+    isAccept
+      ? 'Écris une note pour confirmer l\'acceptation et expliquer les prochaines étapes à l\'équipe.'
+      : 'Écris une note pour expliquer les raisons du refus. Elle sera consultable dans le panel staff.';
+  document.getElementById('decision-note-input').value = '';
+  document.getElementById('decision-note-counter').textContent = '0 caractères — minimum 20';
+  document.getElementById('decision-note-counter').className = 'char-counter low';
+
+  // Compteur en temps réel
+  const ta = document.getElementById('decision-note-input');
+  ta.oninput = () => {
+    const len = ta.value.trim().length;
+    const counter = document.getElementById('decision-note-counter');
+    counter.textContent = `${len} / 20 caractères minimum`;
+    counter.className = 'char-counter ' + (len >= 20 ? 'ok' : len >= 10 ? 'mid' : 'low');
+  };
+
+  document.getElementById('modal-decision-note').classList.add('open');
+  setTimeout(() => ta.focus(), 100);
+}
+
+async function confirmDecisionNote() {
+  if (!_pendingDecision) return;
+  const note = document.getElementById('decision-note-input').value.trim();
+  if (note.length < 20) {
+    showToast('La note doit contenir au moins 20 caractères.', 'error');
+    document.getElementById('decision-note-input').classList.add('field-error');
+    return;
+  }
+
+  const { id, newStatut } = _pendingDecision;
+  const btn = document.querySelector('#modal-decision-note .btn-primary');
+  setLoading(btn, true, 'Enregistrement…');
+
+  // Changer le statut
+  await _applyStatutChange(id, newStatut, note);
+
+  // Sauvegarder la note
+  const { data: { session } } = await sb.auth.getSession();
+  const auteur = session?.user?.email || 'Staff';
+  await sb.from('notes_candidatures').insert({
+    candidature_id: id,
+    auteur,
+    contenu: `[${STATUT_LABELS[newStatut].toUpperCase()}] ${note}`,
+  });
+
+  // Webhook Discord — notification note de décision
+  const cand     = allCandidatures.find(c => c.id === id);
+  const posteNom = cand ? getPosteNom(cand) : '—';
+  const decisionEmbed = {
+    title: `${newStatut === 'acceptee' ? '✅' : '❌'} Décision — ${posteNom}`,
+    description: `**${auteur}** a ${newStatut === 'acceptee' ? 'accepté' : 'refusé'} la candidature de **${cand?.pseudo_discord || '—'}**.`,
+    color: newStatut === 'acceptee' ? 0x4aaa80 : 0xb04848,
+    fields: [
+      { name: 'Note de décision', value: note, inline: false },
+      { name: 'Code de suivi', value: cand?.code_suivi ? `\`${cand.code_suivi}\`` : '—', inline: true },
+    ],
+    footer: { text: `Le Prix de la Trêve · ${new Date().toLocaleDateString('fr-FR')}` },
+    timestamp: new Date().toISOString(),
+  };
+  await sendDiscordWebhook(CONFIG.discord.webhookAdmin, { embeds: [decisionEmbed] });
+
+  setLoading(btn, false);
+  cancelDecisionNote();
+  showToast('Décision enregistrée avec note.', 'success');
+
+  // Rafraîchir le détail si ouvert
+  if (document.getElementById('modal-detail').classList.contains('open')) {
+    await loadNotes(id);
+  }
+}
+
+function cancelDecisionNote() {
+  document.getElementById('modal-decision-note').classList.remove('open');
+  _pendingDecision = null;
 }
 
 // -----------------------------------------------
@@ -630,7 +751,274 @@ async function addNote(candidatureId) {
   setLoading(btn, false);
   if (error) { showToast('Erreur lors de l\'ajout de la note.', 'error'); return; }
 
+  // Webhook Discord — notification note staff
+  const cand     = allCandidatures.find(c => c.id === candidatureId);
+  const posteNom = cand ? getPosteNom(cand) : '—';
+  const noteEmbed = {
+    title: `📝 Note staff — ${posteNom}`,
+    description: `**${auteur}** a ajouté une note sur la candidature de **${cand?.pseudo_discord || '—'}**.`,
+    color: 0xC4872A,
+    fields: [
+      { name: 'Note', value: contenu, inline: false },
+      { name: 'Code', value: cand?.code_suivi ? `\`${cand.code_suivi}\`` : '—', inline: true },
+    ],
+    footer: { text: `Le Prix de la Trêve · ${new Date().toLocaleDateString('fr-FR')}` },
+    timestamp: new Date().toISOString(),
+  };
+  await sendDiscordWebhook(CONFIG.discord.webhookAdmin, { embeds: [noteEmbed] });
+
   input.value = '';
   showToast('Note ajoutée.', 'success');
   await loadNotes(candidatureId);
+}
+
+
+// =========================================================
+// DASHBOARD — Graphiques, activité, recherche, attribution
+// =========================================================
+
+let _chartTypes   = null;
+let _chartMonthly = null;
+
+// --- Appeler depuis loadAll ---
+async function loadDashboard() {
+  await Promise.all([loadActivityFeed(), renderCharts()]);
+}
+
+// -----------------------------------------------
+// FIL D'ACTIVITÉ RÉCENTE
+// -----------------------------------------------
+async function loadActivityFeed() {
+  const { data } = await sb
+    .from('candidatures')
+    .select('id, code_suivi, type, pseudo_discord, statut, created_at, updated_at, assigne_a')
+    .order('updated_at', { ascending: false })
+    .limit(18);
+
+  const feed = document.getElementById('activity-feed');
+  if (!feed) return;
+  if (!data?.length) {
+    feed.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-3);font-size:12px;">Aucune activité récente.</div>';
+    return;
+  }
+
+  const typeLabels = { staff:'Staff', hr:'HR', oc3:'3ème OC', oc4:'4ème OC' };
+  const statusIcons = { recue:'⬤', examen:'◐', acceptee:'✓', refusee:'✕', retiree:'—' };
+
+  feed.innerHTML = data.map(c => {
+    const elapsed = getElapsed(c.updated_at);
+    const label   = typeLabels[c.type] || c.type;
+    return `
+      <div class="activity-item">
+        <div class="activity-dot ${c.type}"></div>
+        <div class="activity-body">
+          <div class="activity-title">${escHtml(c.pseudo_discord)} · ${label}</div>
+          <div class="activity-meta">
+            <span class="badge ${c.statut}" style="font-size:9px;margin:0 4px 0 0;">${STATUT_LABELS[c.statut]||c.statut}</span>
+            ${elapsed}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function getElapsed(isoString) {
+  const diff = Math.floor((Date.now() - new Date(isoString)) / 60000);
+  if (diff < 1)  return 'à l\'instant';
+  if (diff < 60) return `il y a ${diff} min`;
+  const h = Math.floor(diff / 60);
+  if (h < 24)    return `il y a ${h}h`;
+  const d = Math.floor(h / 24);
+  return `il y a ${d} jour${d > 1 ? 's' : ''}`;
+}
+
+// -----------------------------------------------
+// GRAPHIQUES (Chart.js)
+// -----------------------------------------------
+async function renderCharts() {
+  if (typeof Chart === 'undefined') return;
+
+  const { data: all } = await sb.from('candidatures').select('type, statut, created_at');
+  if (!all?.length) return;
+
+  const palette = {
+    staff:   '#B8813A',
+    hr:      '#C4872A',
+    oc3:     '#5A9A70',
+    oc4:     '#8A9A42',
+  };
+
+  // --- Donut : répartition par type ---
+  const typeCounts = { staff:0, hr:0, oc3:0, oc4:0 };
+  all.forEach(c => { if (typeCounts[c.type] !== undefined) typeCounts[c.type]++; });
+
+  const ctxTypes = document.getElementById('chart-types');
+  if (ctxTypes) {
+    if (_chartTypes) _chartTypes.destroy();
+    _chartTypes = new Chart(ctxTypes, {
+      type: 'doughnut',
+      data: {
+        labels: ['Staff', 'Hauts Rangs', '3ème OC', '4ème OC'],
+        datasets: [{
+          data: [typeCounts.staff, typeCounts.hr, typeCounts.oc3, typeCounts.oc4],
+          backgroundColor: Object.values(palette),
+          borderWidth: 2,
+          borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-card').trim() || '#1F1610',
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        cutout: '65%',
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              color: getComputedStyle(document.documentElement).getPropertyValue('--text-2').trim() || '#A08060',
+              font: { size: 11 },
+              boxWidth: 10,
+              padding: 12,
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // --- Barres : 6 derniers mois ---
+  const now   = new Date();
+  const months = [];
+  const counts = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push(d.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }));
+    const start = d.toISOString();
+    const end   = new Date(d.getFullYear(), d.getMonth() + 1, 1).toISOString();
+    counts.push(all.filter(c => c.created_at >= start && c.created_at < end).length);
+  }
+
+  const ctxMonth = document.getElementById('chart-monthly');
+  if (ctxMonth) {
+    if (_chartMonthly) _chartMonthly.destroy();
+    const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-2').trim() || '#A08060';
+    const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || 'rgba(180,140,100,.13)';
+    _chartMonthly = new Chart(ctxMonth, {
+      type: 'bar',
+      data: {
+        labels: months,
+        datasets: [{
+          label: 'Candidatures',
+          data: counts,
+          backgroundColor: 'rgba(184,129,58,.5)',
+          borderColor: '#B8813A',
+          borderWidth: 1.5,
+          borderRadius: 4,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } },
+          y: { ticks: { color: textColor, font: { size: 10 }, stepSize: 1 }, grid: { color: gridColor }, beginAtZero: true },
+        }
+      }
+    });
+  }
+}
+
+// -----------------------------------------------
+// RECHERCHE GLOBALE
+// -----------------------------------------------
+let _searchTimer = null;
+
+function onSearchInput(val) {
+  document.getElementById('clear-search-btn').style.display = val ? '' : 'none';
+  clearTimeout(_searchTimer);
+  if (!val.trim()) { closeSearch(); return; }
+  _searchTimer = setTimeout(() => globalSearch(val.trim()), 350);
+}
+
+function clearSearch() {
+  document.getElementById('global-search-input').value = '';
+  document.getElementById('clear-search-btn').style.display = 'none';
+  closeSearch();
+}
+
+function closeSearch() {
+  const el = document.getElementById('search-results');
+  el.innerHTML = '';
+  el.classList.remove('open');
+}
+
+async function globalSearch(q) {
+  const { data } = await sb
+    .from('candidatures')
+    .select('id, code_suivi, type, pseudo_discord, statut, created_at')
+    .or(`pseudo_discord.ilike.%${q}%,code_suivi.ilike.%${q}%`)
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  const el = document.getElementById('search-results');
+  if (!data?.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:.5rem 0;">Aucun résultat.</div>';
+    el.classList.add('open');
+    return;
+  }
+
+  const typeLabels = { staff:'Staff', hr:'Hauts Rangs', oc3:'3ème OC', oc4:'4ème OC' };
+  el.innerHTML = data.map(c => `
+    <div class="search-result-item" onclick="openDetailFromSearch(${c.id})">
+      <span class="badge ${c.statut}" style="font-size:9px;margin:0;flex-shrink:0;">${STATUT_LABELS[c.statut]||c.statut}</span>
+      <span style="font-size:12px;font-weight:500;color:var(--text-1);">${escHtml(c.pseudo_discord)}</span>
+      <span style="font-size:11px;color:var(--text-3);">${typeLabels[c.type]||c.type}</span>
+      <span style="font-size:10px;color:var(--text-3);font-family:var(--font-mono);margin-left:auto;">${c.code_suivi}</span>
+    </div>`).join('');
+  el.classList.add('open');
+}
+
+function openDetailFromSearch(id) {
+  closeSearch();
+  clearSearch();
+  const cand = allCandidatures.find(c => c.id === id);
+  if (cand) { showDetail(id); return; }
+  // Si pas en mémoire, recharger et ouvrir
+  sb.from('candidatures').select('*').eq('id', id).single().then(({ data }) => {
+    if (data) { allCandidatures.push(data); showDetail(id); }
+  });
+}
+
+// -----------------------------------------------
+// ATTRIBUTION (assigner à un staff)
+// -----------------------------------------------
+async function saveAssignment(id) {
+  const input = document.getElementById(`assign-${id}`);
+  const val   = input?.value.trim() || null;
+  const { error } = await sb.from('candidatures').update({ assigne_a: val }).eq('id', id);
+  if (error) { showToast('Erreur sauvegarde attribution.', 'error'); return; }
+  const idx = allCandidatures.findIndex(c => c.id === id);
+  if (idx !== -1) allCandidatures[idx].assigne_a = val;
+  const saved = document.getElementById(`assign-saved-${id}`);
+  if (saved) { saved.style.display = 'inline'; setTimeout(() => saved.style.display = 'none', 2000); }
+}
+
+// -----------------------------------------------
+// Mettre à jour loadAll et renderCandidaturesTable
+// -----------------------------------------------
+
+
+// =========================================================
+// NAVIGATION SIDEBAR
+// =========================================================
+
+function switchSection(name, clickedEl) {
+  // Sections
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('section-' + name);
+  if (target) target.classList.add('active');
+
+  // Liens sidebar
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  if (clickedEl) clickedEl.classList.add('active');
 }

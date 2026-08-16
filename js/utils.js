@@ -146,12 +146,12 @@ function renderNav(activePage) {
   const nav = document.getElementById('nav');
   if (!nav) return;
   const links = [
-    { page: 'postes',      href: './index.html',      label: 'Postes'       },
-    { page: 'rangs',       href: './rangs.html',       label: 'Hauts Rangs'  },
-    { page: 'candidature', href: './candidature.html', label: 'Candidater'   },
-    { page: 'suivi',       href: './suivi.html',        label: 'Mon suivi'    },
-    { page: 'faq',         href: './faq.html',          label: 'FAQ'          },
-    { page: 'admin',       href: './admin.html',        label: 'Staff ↗', cls: 'nav-link-admin' },
+    { page:'postes',      href:'./index.html',      label:'Postes',       icon:'ti-home'       },
+    { page:'rangs',       href:'./rangs.html',       label:'Hauts Rangs',  icon:'ti-crown'      },
+    { page:'candidature', href:'./candidature.html', label:'Candidater',   icon:'ti-pencil'     },
+    { page:'suivi',       href:'./suivi.html',        label:'Mon suivi',    icon:'ti-search'     },
+    { page:'faq',         href:'./faq.html',          label:'FAQ',          icon:'ti-help'       },
+    { page:'admin',       href:'./admin.html',        label:'Staff ↗',  icon:'ti-shield',    cls:'nav-link-admin' },
   ];
   const saved = localStorage.getItem('lpdt_theme') || 'dark';
   nav.innerHTML = `
@@ -160,14 +160,24 @@ function renderNav(activePage) {
         <span class="nav-logo-mark">⚔</span>
         <span class="nav-logo-text">Le Prix de la <em>Trêve</em></span>
       </a>
-      <div class="nav-links">
-        ${links.map(l =>
-          `<a href="${l.href}" class="nav-link${l.cls?' '+l.cls:''}${activePage===l.page?' active':''}" data-page="${l.page}">${l.label}</a>`
-        ).join('')}
-        <button class="theme-toggle" onclick="toggleTheme()" title="Mode ${saved==='dark'?'jour':'nuit'}">
+      <nav class="nav-links" role="navigation" aria-label="Navigation principale">
+        ${links.map(l => `
+          <a href="${l.href}"
+             class="nav-link${l.cls ? ' '+l.cls : ''}${activePage===l.page ? ' active' : ''}"
+             data-page="${l.page}"
+             title="${l.label}"
+             aria-label="${l.label}"
+             ${activePage===l.page ? 'aria-current="page"' : ''}>
+            <i class="ti ${l.icon} nav-link-icon" aria-hidden="true"></i>
+            <span class="nav-link-text">${l.label}</span>
+          </a>`).join('')}
+        <button class="theme-toggle"
+                onclick="toggleTheme()"
+                title="Mode ${saved==='dark'?'jour':'nuit'}"
+                aria-label="Basculer le thème">
           <i class="ti ti-${saved==='dark'?'sun':'moon'}" aria-hidden="true"></i>
         </button>
-      </div>
+      </nav>
     </div>
   `;
   renderFooter();

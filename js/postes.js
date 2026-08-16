@@ -1,4 +1,85 @@
 // =========================================================
+// DONNÉES DÉTAILLÉES DES RÔLES — pour la popup
+// =========================================================
+const ROLE_DETAILS = {
+  '1': {
+    tasks: [
+      "Accueil des nouveaux membres et réponse à leurs premières questions",
+      "Prise en charge et suivi des tickets ouverts par les membres",
+      "Accompagnement lors de la création et validation des premiers personnages",
+    ],
+    anciennete: "1 à 2 mois sur le serveur",
+    dispo: "5h / semaine minimum",
+  },
+  '2': {
+    tasks: [
+      "Lecture et correction des fiches de personnage soumises",
+      "Vérification de la cohérence avec les règles du serveur (génétique, noms, rangs)",
+      "Retours bienveillants et guidage des membres lors des corrections",
+    ],
+    anciennete: "1 à 2 mois sur le serveur",
+    dispo: "5h / semaine minimum",
+  },
+  '3': {
+    tasks: [
+      "Traitement des demandes de génétique (pelages, yeux, traits hérités)",
+      "Gestion et mise à jour du registre génétique du serveur",
+      "Accompagnement des membres sur les questions génétiques complexes",
+    ],
+    anciennete: "1 à 2 mois sur le serveur",
+    dispo: "4h / semaine minimum",
+    note: "Une solide maîtrise de la génétique féline et du Codex du serveur est indispensable.",
+  },
+  '4': {
+    tasks: [
+      "Conception et animation d'événements Hors-RP (jeux, concours, activités)",
+      "Organisation des activités récurrentes (Membre du Mois, OC du Mois…)",
+      "Animation de la vie communautaire en dehors du roleplay",
+    ],
+    anciennete: "1 à 2 mois sur le serveur",
+    dispo: "5h / semaine minimum",
+  },
+  '5': {
+    tasks: [
+      "Réponse aux tickets RP pour aider les membres à développer l'histoire de leur OC",
+      "Co-construction d'intrigues personnalisées avec les membres en demande",
+      "Suivi et cohérence des arcs narratifs en cours",
+    ],
+    anciennete: "1 à 2 mois sur le serveur",
+    dispo: "5h / semaine minimum",
+  },
+  '6': {
+    tasks: [
+      "Rédaction des résumés d'événements et des actualités du serveur",
+      "Écriture du lore officiel, des descriptions de lieux et des PNJ notables",
+      "Production des textes narratifs pour les grands événements collectifs",
+    ],
+    anciennete: "1 à 2 mois sur le serveur",
+    dispo: "5h / semaine minimum",
+    note: "Un extrait de rédaction narrative est requis lors de la candidature.",
+  },
+  '7': {
+    tasks: [
+      "Gestion et incarnation des PNJ lors des interactions avec les membres",
+      "Création de nouveaux PNJ cohérents avec le lore et l'univers",
+      "Suivi des PNJ impliqués dans plusieurs fils narratifs simultanément",
+    ],
+    anciennete: "1 à 2 mois sur le serveur",
+    dispo: "5h / semaine minimum",
+  },
+  '8': {
+    tasks: [
+      "Création et organisation des salons RP selon la géographie des territoires",
+      "Modélisation des événements géographiques (incendies, inondations, nouveaux lieux)",
+      "Signalement et gestion des dangers locaux (prédateurs, météo)",
+    ],
+    anciennete: "1 à 2 mois sur le serveur",
+    dispo: "4h / semaine minimum",
+    note: "Une bonne maîtrise de la gestion des salons Discord est nécessaire.",
+  },
+};
+
+// =========================================================
 // postes.js — Page d'accueil (index.html)
 // =========================================================
 
@@ -29,6 +110,7 @@ async function loadStaffPostes() {
   if (error) { renderError('staff-sections'); return; }
   renderStaffSections(data);
   updateStaffStats(data);
+  setTimeout(initScrollAnimations, 50);
 }
 
 async function loadHRPostes() {
@@ -43,6 +125,7 @@ async function loadHRPostes() {
 // -----------------------------------------------
 
 function renderStaffSections(postes) {
+  _currentStaffPostes = postes;
   const container = document.getElementById('staff-sections');
   container.innerHTML = '';
 
@@ -92,6 +175,9 @@ function renderStaffCard(poste, poleId) {
           Candidater →
         </a>
         ${canWait ? `<button class="btn btn-ghost btn-sm" onclick="openAttente(${poste.id}, 'staff', '${escHtml(poste.nom)}')">Liste d'attente</button>` : ''}
+        <button class="card-info-btn" onclick="openRolePopup(${poste.id}, '${poleId}', event)">
+          <i class="ti ti-info-circle" aria-hidden="true"></i> En savoir plus
+        </button>
       </div>
     </div>
   `;
@@ -211,20 +297,10 @@ async function submitAttente() {
   const btn = document.querySelector('#modal-attente .btn-primary');
   setLoading(btn, true, 'Inscription…');
 
-  // Auto-lookup : si ce pseudo est déjà connu, récupérer son ID Discord
-  let discordId = null;
-  const { data: membreConnu } = await sb
-    .from('membres_discord')
-    .select('discord_id')
-    .eq('pseudo_discord', pseudo)
-    .maybeSingle();
-  if (membreConnu?.discord_id) discordId = membreConnu.discord_id;
-
   const { error } = await sb.from('liste_attente').insert({
-    poste_id:       attentePosteId,
-    poste_type:     attentePosteType,
+    poste_id:      attentePosteId,
+    poste_type:    attentePosteType,
     pseudo_discord: pseudo,
-    discord_id:     discordId,
   });
 
   setLoading(btn, false);
@@ -244,4 +320,101 @@ async function submitAttente() {
 function renderError(containerId) {
   document.getElementById(containerId).innerHTML =
     '<div class="empty-state">Impossible de charger les postes. Vérifie ta connexion.</div>';
+}
+
+// =========================================================
+// POPUP DÉTAIL D'UN RÔLE STAFF
+// =========================================================
+
+let _currentStaffPostes = []; // référence locale pour le popup
+
+function openRolePopup(posteId, poleId, event) {
+  if (event) event.stopPropagation();
+
+  const poste  = _currentStaffPostes.find(p => p.id === posteId);
+  const pole   = POLES.find(p => p.id === poleId);
+  const detail = ROLE_DETAILS[String(posteId)];
+  if (!poste || !pole) return;
+
+  const poleColors = { guide:'var(--guide)', narration:'var(--narration)', batisseur:'var(--batisseur)' };
+  const color = poleColors[poleId] || 'var(--accent)';
+
+  document.getElementById('popup-header').innerHTML = `
+    <div class="role-popup-pole" style="color:${color};">${pole.nom}</div>
+    <div class="role-popup-title">${escHtml(poste.nom)}</div>
+    <div class="role-popup-desc">${escHtml(poste.description)}</div>
+  `;
+
+  let content = '';
+  if (detail?.tasks?.length) {
+    content += `<div class="role-popup-tasks">
+      <div class="role-popup-tasks-title">Missions & responsabilités</div>
+      ${detail.tasks.map(t => `
+        <div class="role-popup-task">
+          <span class="role-popup-task-dot"></span>
+          <span>${escHtml(t)}</span>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  if (detail?.anciennete || detail?.dispo) {
+    content += `<div class="role-popup-reqs">`;
+    if (detail.anciennete) content += `
+      <div class="role-popup-req">
+        <i class="ti ti-calendar" aria-hidden="true"></i>
+        <span>${escHtml(detail.anciennete)}</span>
+      </div>`;
+    if (detail.dispo) content += `
+      <div class="role-popup-req">
+        <i class="ti ti-clock" aria-hidden="true"></i>
+        <span>${escHtml(detail.dispo)}</span>
+      </div>`;
+    content += `</div>`;
+  }
+
+  if (detail?.note) {
+    content += `<div class="role-popup-note"><i class="ti ti-info-circle" aria-hidden="true"></i> ${escHtml(detail.note)}</div>`;
+  }
+
+  document.getElementById('popup-content').innerHTML = content;
+
+  const applyBtn = document.getElementById('popup-apply-btn');
+  if (poste.statut === 'ouvert') {
+    applyBtn.href = `./candidature.html?type=staff&id=${posteId}`;
+    applyBtn.style.display = '';
+    applyBtn.textContent = 'Candidater pour ce rôle →';
+  } else {
+    applyBtn.style.display = 'none';
+  }
+
+  document.getElementById('modal-role-detail').classList.add('open');
+}
+
+function closeRolePopup() {
+  document.getElementById('modal-role-detail').classList.remove('open');
+}
+
+// =========================================================
+// ANIMATIONS AU DÉFILEMENT
+// =========================================================
+
+function initScrollAnimations() {
+  if (!window.IntersectionObserver) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    let delay = 0;
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        setTimeout(() => el.classList.add('anim-in'), delay);
+        delay += 55;
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+  document.querySelectorAll('.post-card, .stat-card').forEach(el => {
+    el.classList.add('anim-ready');
+    observer.observe(el);
+  });
 }
