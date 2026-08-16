@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Candidature — Le Prix de la Trêve</title>
   <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+
   <style>
     /* --- OC tabs --- */
     .oc-tabs { display:flex; gap:3px; background:var(--bg-page); border:1px solid var(--border); border-radius:var(--radius); padding:3px; margin-bottom:1.5rem; width:fit-content; }
@@ -220,22 +222,22 @@
       <div id="hr-specific-container"></div>
 
       <!-- PARTIE 3 — RP -->
-      <div class="form-part-title" id="hr-rp-title" style="display:none;">Roleplay</div>
+      <div class="form-part-title" id="hr-rp-title">Roleplay</div>
 
-      <div class="form-group" id="hr-moti-ic-group" style="display:none;">
+      <div class="form-group" id="hr-moti-ic-group">
         <label class="form-label" for="hr-moti-ic">Motivation en roleplay (voix de ton personnage)</label>
         <textarea id="hr-moti-ic" rows="4" data-min="20"
           placeholder="Comment ton personnage envisage-t-il ce rang ? Qu'est-ce qui l'anime, le pousse vers cette responsabilité ? Écris à la première personne ou en description intérieure."></textarea>
       </div>
 
-      <div class="form-group" id="hr-extrait-group" style="display:none;">
+      <div class="form-group" id="hr-extrait-group">
         <label class="form-label" for="hr-extrait">Extrait roleplay <span style="color:var(--indispo)">*</span></label>
         <textarea id="hr-extrait" rows="10" data-min="100"
           placeholder="Propose un extrait roleplay de 10 à 20 lignes illustrant ton style d'écriture dans la peau de ce personnage. Il peut s'agir d'une scène de ton choix, inédite ou déjà jouée."></textarea>
         <p class="form-hint">Cet extrait est le principal critère d'évaluation de ta candidature HR.</p>
       </div>
 
-      <div id="hr-submit-wrap" style="display:none;">
+      <div id="hr-submit-wrap">
         <button type="button" class="btn btn-primary" onclick="previewForm('hr')">Envoyer ma candidature →</button>
       </div>
 

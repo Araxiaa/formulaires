@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Administration — Le Prix de la Trêve</title>
   <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <script>
     (function(){
       var t = localStorage.getItem('lpdt_theme') || 'dark';
@@ -16,16 +18,15 @@
 
 <nav class="nav" id="nav"></nav>
 
-<main class="main">
+<main style="padding:0;max-width:none;flex:1;display:flex;flex-direction:column;">
 
-  <!-- ===========================
-       GATE : CONNEXION
-  ============================ -->
-  <div id="admin-gate" class="admin-gate">
-    <span class="admin-gate-icon">⚿</span>
-    <h1 class="admin-title">Espace administration</h1>
-    <p class="admin-sub">Réservé aux membres du staff. Connecte-toi avec ton compte Supabase.</p>
-
+  <!-- GATE — Connexion -->
+  <div id="admin-gate" style="max-width:340px;margin:4rem auto;padding:1.5rem;width:100%;">
+    <span style="font-size:28px;color:var(--text-3);display:block;margin-bottom:1rem;text-align:center;">
+      <i class="ti ti-lock" aria-hidden="true"></i>
+    </span>
+    <h1 class="admin-title" style="text-align:center;">Espace administration</h1>
+    <p class="admin-sub" style="text-align:center;">Réservé aux membres du staff.</p>
     <div class="form-group">
       <label class="form-label" for="admin-email">Email</label>
       <input type="email" id="admin-email" placeholder="adresse@email.com" autocomplete="email">
@@ -35,156 +36,222 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password">
     </div>
     <button class="btn btn-primary btn-full" onclick="loginAdmin()">Accéder au panel</button>
-    <p class="admin-demo">Le compte doit être créé dans Supabase Dashboard › Authentication › Users.</p>
+    <p style="font-size:11px;color:var(--text-3);margin-top:10px;text-align:center;">Compte créé dans Supabase Dashboard › Authentication › Users.</p>
   </div>
 
-  <!-- ===========================
-       PANEL ADMIN
-  ============================ -->
-  <div id="admin-panel" class="hidden">
+  <!-- PANEL — Sidebar + Contenu -->
+  <div id="admin-panel" class="hidden admin-layout">
 
-    <div class="admin-panel-header">
-      <div>
-        <h1 class="admin-title" style="margin:0;">Panel d'administration</h1>
-        <p style="font-size:12px; color:var(--text-3); margin-top:3px;" id="admin-user-info"></p>
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-title">Dashboard</div>
+        <div class="sidebar-logo-sub" id="admin-user-info">—</div>
       </div>
-      <button class="btn btn-ghost btn-sm" onclick="logoutAdmin()">Déconnexion</button>
-    </div>
 
+      <nav class="sidebar-nav" aria-label="Navigation admin">
+        <div class="sidebar-nav-label">Navigation</div>
+        <button class="sidebar-link active" onclick="switchSection('dashboard',this)">
+          <i class="ti ti-home" aria-hidden="true"></i>
+          <span>Accueil</span>
+        </button>
+        <button class="sidebar-link" onclick="switchSection('postes',this)">
+          <i class="ti ti-layout-grid" aria-hidden="true"></i>
+          <span>Postes</span>
+        </button>
+        <button class="sidebar-link" onclick="switchSection('attentes',this)">
+          <i class="ti ti-clock" aria-hidden="true"></i>
+          <span>Listes d'attente</span>
+          <span id="attente-count" style="margin-left:auto;font-size:10px;opacity:.6;"></span>
+        </button>
+        <button class="sidebar-link" onclick="switchSection('candidatures',this)">
+          <i class="ti ti-file-text" aria-hidden="true"></i>
+          <span>Candidatures</span>
+        </button>
+      </nav>
 
-    <!-- Statistiques -->
-    <div class="stats-admin" id="admin-stats">
-      <div class="stat-admin-card highlight">
-        <div class="stat-admin-num" id="stat-mois">—</div>
-        <div class="stat-admin-lbl">Ce mois-ci</div>
-        <div class="stat-admin-sub">candidatures reçues</div>
+      <div class="sidebar-bottom">
+        <a href="./index.html" class="sidebar-link">
+          <i class="ti ti-arrow-left" aria-hidden="true"></i>
+          <span>Site public</span>
+        </a>
+        <button class="sidebar-link" onclick="loadAll()" title="Actualiser">
+          <i class="ti ti-refresh" aria-hidden="true"></i>
+          <span>Actualiser</span>
+        </button>
+        <button class="sidebar-link" onclick="logoutAdmin()">
+          <i class="ti ti-logout" aria-hidden="true"></i>
+          <span>Déconnexion</span>
+        </button>
       </div>
-      <div class="stat-admin-card">
-        <div class="stat-admin-num" id="stat-taux">—</div>
-        <div class="stat-admin-lbl">Taux d'acceptation</div>
-        <div class="stat-admin-sub">sur les candidatures décidées</div>
+    </aside>
+
+    <!-- Contenu principal -->
+    <div class="admin-content">
+
+      <!-- SECTION : Accueil / Dashboard -->
+      <section id="section-dashboard" class="admin-section active">
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+          <h2 style="font-family:var(--font-voice);font-size:20px;font-weight:500;color:var(--text-1);">Vue d'ensemble</h2>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-admin" id="admin-stats">
+          <div class="stat-admin-card highlight">
+            <div class="stat-admin-num" id="stat-mois">—</div>
+            <div class="stat-admin-lbl">Ce mois-ci</div>
+            <div class="stat-admin-sub">candidatures reçues</div>
+          </div>
+          <div class="stat-admin-card">
+            <div class="stat-admin-num" id="stat-taux">—</div>
+            <div class="stat-admin-lbl">Taux d'acceptation</div>
+            <div class="stat-admin-sub">sur les décisions</div>
+          </div>
+          <div class="stat-admin-card">
+            <div class="stat-admin-num" id="stat-delai">—</div>
+            <div class="stat-admin-lbl">Délai moyen</div>
+            <div class="stat-admin-sub">réception → décision</div>
+          </div>
+          <div class="stat-admin-card">
+            <div class="stat-admin-num" id="stat-attente">—</div>
+            <div class="stat-admin-lbl">En attente</div>
+            <div class="stat-admin-sub">de décision</div>
+          </div>
+        </div>
+
+        <!-- Recherche globale -->
+        <div class="dash-search-bar">
+          <div class="dash-search-row">
+            <i class="ti ti-search" style="color:var(--text-3);font-size:16px;flex-shrink:0;" aria-hidden="true"></i>
+            <input type="text" id="global-search-input"
+              placeholder="Rechercher par pseudo Discord ou code de suivi (TRV-…)"
+              style="border:none;background:transparent;padding:4px 0;font-size:14px;outline:none;flex:1;"
+              oninput="onSearchInput(this.value)">
+            <button class="btn btn-ghost btn-sm" onclick="clearSearch()" id="clear-search-btn" style="display:none;">
+              <i class="ti ti-x" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="dash-search-results" id="search-results"></div>
+        </div>
+
+        <!-- Graphiques + Activité -->
+        <div class="dash-grid">
+          <div class="dash-charts">
+            <div class="dash-chart-card">
+              <div class="dash-chart-title">Répartition par type</div>
+              <div style="height:190px;display:flex;align-items:center;justify-content:center;">
+                <canvas id="chart-types" style="max-height:190px;"></canvas>
+              </div>
+            </div>
+            <div class="dash-chart-card">
+              <div class="dash-chart-title">Évolution mensuelle (6 derniers mois)</div>
+              <div style="height:160px;">
+                <canvas id="chart-monthly" style="max-height:160px;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="activity-feed-card">
+            <div class="activity-feed-title">Activité récente</div>
+            <div class="activity-feed-list" id="activity-feed">
+              <div style="text-align:center;padding:2rem;color:var(--text-3);font-size:12px;">Chargement…</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION : Postes -->
+      <section id="section-postes" class="admin-section">
+        <h2 style="font-family:var(--font-voice);font-size:20px;font-weight:500;color:var(--text-1);margin-bottom:1.5rem;">Gestion des postes</h2>
+
+        <div class="admin-section-label">Postes Staff</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Rôle</th><th>Pôle</th><th>Places</th><th>Statut</th><th>Action</th></tr></thead>
+            <tbody id="admin-staff-tbody"><tr><td colspan="5" class="td-muted">Chargement…</td></tr></tbody>
+          </table>
+        </div>
+
+        <div class="admin-section-label">Hauts Rangs</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Rang</th><th>Clan</th><th>Titulaire</th><th>Statut</th><th>Action</th></tr></thead>
+          <tbody id="admin-hr-tbody"><tr><td colspan="5" class="td-muted">Chargement…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION : Listes d'attente -->
+      <section id="section-attentes" class="admin-section">
+        <h2 style="font-family:var(--font-voice);font-size:20px;font-weight:500;color:var(--text-1);margin-bottom:.75rem;">Listes d'attente</h2>
+        <p style="font-size:13px;color:var(--text-2);margin-bottom:1.25rem;line-height:1.6;">
+          Ajoute l'ID Discord de chaque membre pour qu'il soit mentionné lors de l'ouverture d'un poste.
+          <a href="https://support.discord.com/hc/fr/articles/206346498" target="_blank" style="color:var(--accent);">Comment trouver un ID ?</a>
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Pseudo Discord</th><th>ID Discord</th><th>Poste</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody id="admin-attente-tbody"><tr><td colspan="5" class="td-muted">Chargement…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION : Candidatures -->
+      <section id="section-candidatures" class="admin-section">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.75rem;">
+          <h2 style="font-family:var(--font-voice);font-size:20px;font-weight:500;color:var(--text-1);">Candidatures</h2>
+          <span id="cand-count" style="font-size:12px;color:var(--text-3);"></span>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;">
+          <select id="filter-cand-type" class="admin-select" onchange="filterCandidatures()" style="width:auto;">
+            <option value="">Tous types</option>
+            <option value="staff">Staff</option>
+            <option value="hr">Hauts Rangs</option>
+            <option value="oc3">3ème OC</option>
+            <option value="oc4">4ème OC</option>
+          </select>
+          <select id="filter-cand-statut" class="admin-select" onchange="filterCandidatures()" style="width:auto;">
+            <option value="">Tous statuts</option>
+            <option value="recue">Reçue</option>
+            <option value="examen">En examen</option>
+            <option value="acceptee">Acceptée</option>
+            <option value="refusee">Refusée</option>
+            <option value="retiree">Retirée</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Code</th><th>Pseudo</th><th>Type</th><th>Poste</th><th>Date</th><th>Assigné à</th><th>Statut</th><th>Détail</th></tr>
+            </thead>
+            <tbody id="admin-cand-tbody"><tr><td colspan="8" class="td-muted">Chargement…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div><!-- .admin-content -->
+  </div><!-- .admin-layout -->
+
+  <!-- Modale note obligatoire -->
+  <div class="modal-overlay" id="modal-decision-note">
+    <div class="modal-box" style="max-width:500px;">
+      <h2 class="modal-title" id="decision-note-title">Confirmer la décision</h2>
+      <p class="modal-sub" id="decision-note-sub">Une note est obligatoire pour justifier cette décision.</p>
+      <div class="form-group">
+        <label class="form-label" for="decision-note-input">Note de décision <span style="color:var(--indispo)">*</span></label>
+        <textarea id="decision-note-input" rows="4" placeholder="Explique la raison de cette décision…"></textarea>
+        <div class="char-counter" id="decision-note-counter">0 caractères — minimum 20</div>
       </div>
-      <div class="stat-admin-card">
-        <div class="stat-admin-num" id="stat-delai">—</div>
-        <div class="stat-admin-lbl">Délai moyen</div>
-        <div class="stat-admin-sub">entre réception et décision</div>
-      </div>
-      <div class="stat-admin-card">
-        <div class="stat-admin-num" id="stat-attente">—</div>
-        <div class="stat-admin-lbl">En attente</div>
-        <div class="stat-admin-sub">de décision du staff</div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="confirmDecisionNote()">Confirmer</button>
+        <button class="btn btn-ghost"   onclick="cancelDecisionNote()">Annuler</button>
       </div>
     </div>
-
-    <!-- Postes Staff -->
-    <div class="admin-section-label">Postes Staff</div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Rôle</th>
-            <th>Pôle</th>
-            <th>Places</th>
-            <th>Statut</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="admin-staff-tbody">
-          <tr><td colspan="5" class="td-muted">Chargement…</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Postes Hauts Rangs -->
-    <div class="admin-section-label">Hauts Rangs</div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Rang</th>
-            <th>Clan</th>
-            <th>Titulaire actuel·le</th>
-            <th>Statut</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="admin-hr-tbody">
-          <tr><td colspan="5" class="td-muted">Chargement…</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-
-    <!-- Listes d'attente -->
-    <div class="admin-section-label">Listes d'attente <span id="attente-count" style="font-weight:400;color:var(--text-3);text-transform:none;letter-spacing:0;"></span></div>
-    <p style="font-size:12px;color:var(--text-2);margin-bottom:.875rem;">
-      Ajoute l'ID Discord de chaque membre pour que la notification l'identifie correctement lors de l'ouverture du poste.
-      <a href="https://support.discord.com/hc/fr/articles/206346498" target="_blank" style="color:var(--accent);">Comment trouver un ID ?</a>
-    </p>
-    <div id="admin-attente-wrap">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Pseudo Discord</th>
-              <th>ID Discord</th>
-              <th>Poste</th>
-              <th>Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="admin-attente-tbody">
-            <tr><td colspan="5" class="td-muted">Chargement…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Candidatures -->
-    <div class="admin-section-label">Candidatures</div>
-
-    <!-- Filtres candidatures -->
-    <div style="display:flex; gap:8px; margin-bottom:1rem; flex-wrap:wrap;">
-      <select id="filter-cand-type"   class="admin-select" onchange="filterCandidatures()" style="width:auto;">
-        <option value="">Tous types</option>
-        <option value="staff">Staff</option>
-        <option value="hr">Hauts Rangs</option>
-        <option value="oc3">3ème OC</option>
-        <option value="oc4">4ème OC</option>
-      </select>
-      <select id="filter-cand-statut" class="admin-select" onchange="filterCandidatures()" style="width:auto;">
-        <option value="">Tous statuts</option>
-        <option value="recue">Reçue</option>
-        <option value="examen">En examen</option>
-        <option value="acceptee">Acceptée</option>
-        <option value="refusee">Refusée</option>
-      </select>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Code</th>
-            <th>Pseudo</th>
-            <th>Type</th>
-            <th>Poste</th>
-            <th>Date</th>
-            <th>Statut</th>
-            <th>Détail</th>
-          </tr>
-        </thead>
-        <tbody id="admin-cand-tbody">
-          <tr><td colspan="7" class="td-muted">Chargement…</td></tr>
-        </tbody>
-      </table>
-    </div>
-
   </div>
 
-  <!-- Détail candidature (panneau latéral) -->
+  <!-- Modale détail candidature -->
   <div class="modal-overlay" id="modal-detail">
-    <div class="modal-box" style="max-width:580px; max-height:85vh; overflow-y:auto;">
+    <div class="modal-box" style="max-width:600px;max-height:85vh;overflow-y:auto;">
       <h2 class="modal-title" id="detail-title">Détail de la candidature</h2>
       <div id="detail-content" style="margin-top:1rem;"></div>
       <div class="modal-actions" style="margin-top:1.25rem;">
@@ -195,11 +262,12 @@
 
 </main>
 
+<div id="footer"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="./js/config.js"></script>
 <script src="./js/data.js"></script>
 <script src="./js/utils.js"></script>
 <script src="./js/admin.js"></script>
-  <div id="footer"></div>
 </body>
 </html>

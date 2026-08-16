@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Postes — Le Prix de la Trêve</title>
   <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <script>
     (function(){
       var t = localStorage.getItem('lpdt_theme') || 'dark';
@@ -79,10 +80,29 @@
 </div>
 
 <div id="footer"></div>
+
+<!-- Modale détail d'un rôle staff -->
+<div class="modal-overlay" id="modal-role-detail">
+  <div class="modal-box" style="max-width:560px;max-height:85vh;overflow-y:auto;">
+    <div class="role-popup-header" id="popup-header"></div>
+    <div id="popup-content"></div>
+    <div class="modal-actions" style="margin-top:1.25rem;position:sticky;bottom:0;background:var(--bg-card);padding:.75rem 0 0;">
+      <a id="popup-apply-btn" href="#" class="btn btn-primary">Candidater pour ce rôle →</a>
+      <button class="btn btn-ghost" onclick="closeRolePopup()">Fermer</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="./js/config.js"></script>
 <script src="./js/data.js"></script>
 <script src="./js/utils.js"></script>
 <script src="./js/postes.js"></script>
+
+<script>
+  document.getElementById('modal-role-detail')?.addEventListener('click', function(e) {
+    if (e.target === this) closeRolePopup();
+  });
+</script>
 </body>
 </html>
