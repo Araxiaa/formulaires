@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Administration · Le Prix de la Trêve</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div id="admin-gate" class="gate panel">
+  <h1 style="font-size:1.4rem">Administration</h1>
+  <p class="muted">Accès réservé au staff.</p>
+  <form id="login-form">
+    <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="username" required></div>
+    <div class="field"><label for="password">Mot de passe</label><input id="password" type="password" autocomplete="current-password" required></div>
+    <button class="btn" type="submit" style="width:100%">Se connecter</button>
+  </form>
+  <p class="faint" style="margin-top:16px"><a href="index.html">← Retour au site</a></p>
+</div>
+
+<div id="admin-panel" class="admin-shell hidden">
+  <aside class="sidebar">
+    <h2><i class="ti ti-paw"></i> Dashboard</h2>
+    <div class="who" id="admin-user-info"></div>
+    <button class="sidebar-link" onclick="switchSection('dashboard', this)"><i class="ti ti-home"></i><span>Accueil</span></button>
+    <button class="sidebar-link" onclick="switchSection('postes', this)"><i class="ti ti-layout-grid"></i><span>Postes</span></button>
+    <button class="sidebar-link" onclick="switchSection('attente', this)"><i class="ti ti-clock"></i><span>Listes d'attente</span></button>
+    <button class="sidebar-link" onclick="switchSection('candidatures', this)"><i class="ti ti-files"></i><span>Candidatures</span></button>
+    <div class="spacer"></div>
+    <a class="sidebar-link" href="index.html"><i class="ti ti-world"></i><span>Site public</span></a>
+    <button class="sidebar-link" onclick="loadAll()"><i class="ti ti-refresh"></i><span>Actualiser</span></button>
+    <button class="sidebar-link" onclick="logout()"><i class="ti ti-logout"></i><span>Déconnexion</span></button>
+  </aside>
+
+  <div class="admin-main">
+    <section id="sec-dashboard" class="admin-section active">
+      <h1>Accueil</h1>
+      <div class="admin-stats" id="dash-stats"></div>
+      <div class="field"><input id="global-search" type="search" placeholder="Rechercher un pseudo ou un code TRV-…"></div>
+      <div id="search-results"></div>
+      <div class="charts">
+        <div class="chart-box"><canvas id="chart-types"></canvas></div>
+        <div class="chart-box"><canvas id="chart-months"></canvas></div>
+      </div>
+      <h2>Activité récente</h2>
+      <ul class="activity" id="activity"></ul>
+    </section>
+
+    <section id="sec-postes" class="admin-section">
+      <h1>Postes Staff</h1>
+      <div class="table-wrap"><table id="tbl-staff"></table></div>
+      <h1>Postes Hauts Rangs</h1>
+      <div class="table-wrap"><table id="tbl-hr"></table></div>
+    </section>
+
+    <section id="sec-attente" class="admin-section">
+      <h1>Listes d'attente</h1>
+      <div class="table-wrap"><table id="tbl-attente"></table></div>
+    </section>
+
+    <section id="sec-candidatures" class="admin-section">
+      <h1>Candidatures</h1>
+      <div class="row">
+        <select id="f-type" style="width:auto"><option value="">Tous les types</option><option value="staff">Staff</option><option value="hr">Haut Rang</option><option value="oc3">3ème OC</option><option value="oc4">4ème OC</option></select>
+        <select id="f-statut" style="width:auto"><option value="">Tous les statuts</option><option value="recue">Reçue</option><option value="examen">En examen</option><option value="acceptee">Acceptée</option><option value="refusee">Refusée</option><option value="retiree">Retirée</option></select>
+        <span class="muted" id="cand-count"></span>
+      </div>
+      <div class="table-wrap"><table id="tbl-cand"></table></div>
+      <p class="faint"><span class="badge examen">Surligné</span> : en examen depuis plus de 7 jours.</p>
+    </section>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

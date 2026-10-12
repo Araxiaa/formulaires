@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Postes · Le Prix de la Trêve</title>
+<meta name="description" content="Candidatures pour Le Prix de la Trêve, serveur de roleplay La Guerre des Clans.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<main>
+<section class="hero reveal"><h1>Rejoins l'équipe</h1><p>Le Prix de la Trêve recrute. Découvre les postes ouverts du Staff et des Hauts Rangs, puis dépose ta candidature.</p></section>
+<div class="center"><div class="toggle" id="view-toggle"><button class="active" data-view="staff">Staff</button><button data-view="hr">Hauts Rangs</button></div></div>
+<div id="view"><p class="muted center">Chargement…</p></div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/postes.js"></script>
+<script>renderNav('postes');</script>
+</body>
+</html>

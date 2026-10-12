@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rôles de Gestion | Le Prix de la Trêve</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+    <nav>
+        <div class="logo">Le Prix de la <span>Trêve</span></div>
+        <ul class="nav-links">
+            <li><a href="index.html">Retour au Sanctuaire</a></li>
+        </ul>
+    </nav>
+    </header>
+
+    <main class="form-container">
+        <section class="form-header">
+            <h1>Candidature aux Rôles de Gestion</h1>
+            <div class="instructions">
+                <p>Bienvenue dans le processus de candidature pour un rôle de gestion. Lisez attentivement les instructions avant de commencer :</p>
+                <div class="alert-box" style="background: rgba(231, 76, 60, 0.05); border: 1px dashed var(--closed-color); padding: 15px; border-radius: 8px; margin: 15px 0; color: #f2a1a1;">
+                    <strong>⚠️ RAPPEL IMPORTANT :</strong> Les rôles de gestion ne sont <strong>PAS</strong> des rôles staff. Cela signifie que :
+                    <ul style="margin-top: 5px; padding-left: 20px;">
+                        <li>Vous n'avez pas l'autorité d'un staff pour sanctionner ou modérer des membres.</li>
+                        <li>Vous n'avez pas accès aux salons et informations réservés au staff.</li>
+                        <li>Vos décisions dans votre domaine restent soumises à la validation du staff si nécessaire.</li>
+                        <li>Votre rôle est technique et utilitaire, vous aidez le serveur à fonctionner sans avoir les responsabilités d'un membre du staff.</li>
+                    </ul>
+                </div>
+                <ul>
+                    <li>Ce formulaire est ouvert uniquement durant les vagues de recrutement annoncées officiellement.</li>
+                    <li>Vous ne pouvez postuler que pour <strong>un seul rôle à la fois</strong>.</li>
+                    <li>Toute candidature incomplète sera automatiquement refusée.</li>
+                </ul>
+            </div>
+        </section>
+
+        <form id="gestionForm">
+
+            <div class="form-progress">
+                <div class="form-progress-bar" id="progressBar" style="width: 10%;"></div>
+            </div>
+
+            <div class="form-section">
+                <h2>📋 Informations Générales</h2>
+                
+                <div class="input-group">
+                    <label for="gest_pseudo">1. Votre pseudo Discord *</label>
+                    <input type="text" id="gest_pseudo" name="gest_pseudo" placeholder="Ex: .araxia." required>
+                </div>
+
+                <div class="input-group">
+                    <label for="gest_anciennete">2. Depuis combien de temps êtes-vous membre du serveur ? *</label>
+                    <select id="gest_anciennete" name="gest_anciennete" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="Moins d'un mois">Moins d'un mois</option>
+                        <option value="1 à 3 mois">1 à 3 mois</option>
+                        <option value="3 à 6 mois">3 à 6 mois</option>
+                        <option value="Plus de 6 mois">Plus de 6 mois</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="role_gestion_vise">3. Pour quel rôle postulez-vous ? *</label>
+                    <select id="role_gestion_vise" name="role_gestion_vise" required>
+                        <option value="" disabled selected>Choisissez le rôle...</option>
+                        <option value="Scribe">Scribe</option>
+                        <option value="Intendant">Intendant</option>
+                        <option value="Passeur">Passeur</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>🐾 Le Candidat</h2>
+                <p class="section-hint">Ces questions vous concernent en tant que personne, indépendamment du rôle visé.</p>
+
+                <div class="input-group">
+                    <label for="gest_age">4. Quel âge avez-vous ? *</label>
+                    <select id="gest_age" name="gest_age" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="Moins de 16 ans">Moins de 16 ans</option>
+                        <option value="16 à 18 ans">16 à 18 ans</option>
+                        <option value="Plus de 18 ans">Plus de 18 ans</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="gest_dispo">5. Quelle est votre disponibilité moyenne par semaine ? *</label>
+                    <select id="gest_dispo" name="gest_dispo" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="1 à 2 jours par semaine">1 à 2 jours par semaine</option>
+                        <option value="3 à 4 jours par semaine">3 à 4 jours par semaine</option>
+                        <option value="5 à 7 jours par semaine">5 à 7 jours par semaine</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="gest_experience">6. Avez-vous déjà occupé un rôle de gestion ou d'organisation sur un autre serveur Discord ? *</label>
+                    <select id="gest_experience" name="gest_experience" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="Oui">Oui</option>
+                        <option value="Non">Non</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="gest_experience_details">6.1. Si oui, lequel et pendant combien de temps ?</label>
+                    <textarea id="gest_experience_details" name="gest_experience_details" rows="2" placeholder="Laissez vide si vous avez répondu Non..."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="gest_rigueur">7. Êtes-vous rigoureux dans le suivi de tâches répétitives sur le long terme ? *</label>
+                    <select id="gest_rigueur" name="gest_rigueur" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="Oui, tout à fait">Oui, tout à fait</option>
+                        <option value="Plutôt oui">Plutôt oui</option>
+                        <option value="Plutôt non">Plutôt non</option>
+                        <option value="Non, pas vraiment">Non, pas vraiment</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="gest_q8">8. Comment réagissez-vous lorsqu'une tâche que vous devez accomplir ne rentre pas dans votre domaine de compétence ? *</label>
+                    <textarea id="gest_q8" name="gest_q8" rows="3" required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="gest_q9">9. Pourquoi souhaitez-vous occuper ce rôle de gestion plutôt qu'un rôle staff classique ? *</label>
+                    <textarea id="gest_q9" name="gest_q9" rows="3" required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="gest_q10">10. Selon vous, quelle est la différence entre un rôle de gestion et un rôle staff ? *</label>
+                    <textarea id="gest_q10" name="gest_q10" rows="3" required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="gest_q11">11. Comment gérez-vous une situation où un membre conteste une décision que vous avez prise dans votre domaine de gestion, sachant que vous n'avez pas l'autorité d'un staff pour trancher ? *</label>
+                    <textarea id="gest_q11" name="gest_q11" rows="4" required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="gest_autonomie">12. Êtes-vous à l'aise pour travailler en autonomie sans supervision constante du staff ? *</label>
+                    <select id="gest_autonomie" name="gest_autonomie" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="Oui, tout à fait">Oui, tout à fait</option>
+                        <option value="Plutôt oui">Plutôt oui</option>
+                        <option value="Plutôt non">Plutôt non</option>
+                        <option value="Non, pas vraiment">Non, pas vraiment</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="gest_q13">13. Comment vous organisez-vous pour ne pas laisser des tâches en suspens trop longtemps ? *</label>
+                    <textarea id="gest_q13" name="gest_q13" rows="3" required></textarea>
+                </div>
+            </div>
+
+            <div id="section-scribe" class="form-section gest-specialized-section" style="display: none;">
+                <h2>✍️ Spécialité : Scribe</h2>
+                <div class="input-group"><label>1. Comment vous assureriez-vous de garder les fiches à jour de manière régulière sans attendre que les joueurs vous le signalent ? *</label><textarea name="scribe_1" rows="3"></textarea></div>
+                <div class="input-group"><label>2. Un joueur n'a pas mis à jour ses PV après un combat datant de plusieurs jours. Comment le contactez-vous ? *</label><textarea name="scribe_2" rows="3"></textarea></div>
+                <div class="input-group">
+                    <label>3. Êtes-vous à l'aise avec le suivi rigoureux de tableaux ou de listes de données ? *</label>
+                    <select name="scribe_3">
+                        <option value="" disabled selected>Choisissez...</option>
+                        <option value="Oui, tout à fait">Oui, tout à fait</option>
+                        <option value="Plutôt oui">Plutôt oui</option>
+                        <option value="Plutôt non">Plutôt non</option>
+                        <option value="Non, pas vraiment">Non, pas vraiment</option>
+                    </select>
+                </div>
+                <div class="input-group"><label>4. Un joueur conteste la mise à jour de ses PV que vous avez effectuée, affirmant que les chiffres sont incorrects. Comment gérez-vous cette situation ? *</label><textarea name="scribe_4" rows="3"></textarea></div>
+            </div>
+
+            <div id="section-intendant" class="form-section gest-specialized-section" style="display: none;">
+                <h2>🗝️ Spécialité : Intendant</h2>
+                <div class="input-group">
+                    <label>1. Êtes-vous à l'aise avec la gestion technique d'un serveur Discord ? (Création de salons, déplacement, organisation) *</label>
+                    <select name="intendant_1">
+                        <option value="" disabled selected>Choisissez...</option>
+                        <option value="Oui, tout à fait">Oui, tout à fait</option>
+                        <option value="Plutôt oui">Plutôt oui</option>
+                        <option value="Plutôt non">Plutôt non</option>
+                        <option value="Non, pas vraiment">Non, pas vraiment</option>
+                    </select>
+                </div>
+                <div class="input-group"><label>2. Comment organiseriez-vous l'archivage d'un salon de fiche dont le joueur a quitté le serveur ? *</label><textarea name="intendant_2" rows="3"></textarea></div>
+                <div class="input-group"><label>3. Un joueur vous demande de déplacer son salon de fiche en urgence mais vous êtes en train de gérer plusieurs autres demandes en même temps. Comment priorisez-vous ? *</label><textarea name="intendant_3" rows="3"></textarea></div>
+                <div class="input-group"><label>4. Comment vous assurez-vous que l'architecture du serveur Fiche reste claire et lisible pour tous les membres au fil du temps ? *</label><textarea name="intendant_4" rows="3"></textarea></div>
+            </div>
+
+            <div id="section-passeur" class="form-section gest-specialized-section" style="display: none;">
+                <h2>⏳ Spécialité : Passeur</h2>
+                <div class="input-group"><label>1. Un joueur n'a pas transféré les informations de son OC mort vers les Archives depuis plus de 14 jours. Comment procédez-vous ? *</label><textarea name="passeur_1" rows="3"></textarea></div>
+                <div class="input-group">
+                    <label>2. Êtes-vous à l'aise pour manipuler des informations sensibles (fiches, historiques) avec soin et discrétion ? *</label>
+                    <select name="passeur_2">
+                        <option value="" disabled selected>Choisissez...</option>
+                        <option value="Oui, tout à fait">Oui, tout à fait</option>
+                        <option value="Plutôt oui">Plutôt oui</option>
+                        <option value="Plutôt non">Plutôt non</option>
+                        <option value="Non, pas vraiment">Non, pas vraiment</option>
+                    </select>
+                </div>
+                <div class="input-group"><label>3. Un joueur est en deuil de son OC et refuse de procéder au transfert vers les Archives. Comment gérez-vous cette situation avec bienveillance tout en respectant le délai de 14 jours ? *</label><textarea name="passeur_3" rows="3"></textarea></div>
+                <div class="input-group"><label>4. Comment vous assurez-vous qu'aucune fiche n'est oubliée ou perdue lors du transfert vers les Archives ? *</label><textarea name="passeur_4" rows="3"></textarea></div>
+            </div>
+
+            <div class="form-section">
+                <h2>✨ Finalisation</h2>
+                
+                <div class="input-group checkbox-confirm">
+                    <label><input type="checkbox" name="gest_accept_rules" value="Je confirme" required> 1. Confirmez-vous avoir lu et accepté le règlement général du serveur ? *</label>
+                </div>
+
+                <div class="input-group checkbox-confirm">
+                    <label><input type="checkbox" name="gest_accept_distinction" value="Je confirme" required> 2. Confirmez-vous avoir bien lu et compris que ce rôle n'est pas un rôle staff et ne confère pas les mêmes droits ni responsabilités ? *</label>
+                </div>
+
+                <div class="input-group checkbox-confirm">
+                    <label><input type="checkbox" name="gest_accept_sincerity" value="Je confirme" required> 3. Confirmez-vous que toutes vos réponses sont sincères ? *</label>
+                </div>
+
+                <div class="input-group">
+                    <label for="gest_notes_sup">4. Y a-t-il autre chose que vous souhaitez ajouter à votre candidature ? (Optionnel)</label>
+                    <textarea id="gest_notes_sup" name="gest_notes_sup" rows="3"></textarea>
+                </div>
+
+                <button type="submit" id="gestSubmitBtn" class="btn">Envoyer ma candidature</button>
+                <p id="gestFormFeedback" class="feedback-message"></p>
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 <strong>Le Prix de la Trêve</strong> - Tous droits réservés.</p>
+            <p class="credits">Fondateurs : <span>.araxia.</span> & <span>lavnd.13</span> | Site web par : <span>.araxia.</span></p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

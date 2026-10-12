@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAQ · Le Prix de la Trêve</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<main>
+<div class="page-head reveal"><h1>Questions fréquentes</h1><p class="muted">Tout ce qu'il faut savoir avant de candidater.</p></div>
+<h2 class="form-section">Processus général</h2>
+<div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Quel est le délai de réponse ?<i class="ti ti-chevron-down"></i></button><div class="faq-a"><p>Le staff étudie les candidatures dès que possible, généralement sous une à deux semaines. Tu peux suivre l'avancement à tout moment avec ton code de suivi.</p></div></div>
+<div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Puis-je postuler à plusieurs postes en même temps ?<i class="ti ti-chevron-down"></i></button><div class="faq-a"><p>Oui. Tu peux déposer une candidature Staff (jusqu'à deux rôles), une candidature Haut Rang et une demande d'OC supplémentaire en parallèle. Une seule candidature en cours par type est acceptée.</p></div></div>
+<div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Puis-je modifier ma candidature après l'envoi ?<i class="ti ti-chevron-down"></i></button><div class="faq-a"><p>Non, mais tu peux la retirer depuis la page « Mon suivi » (tant qu'elle n'est pas tranchée) et en déposer une nouvelle.</p></div></div>
+<div class="faq-item reveal"><button class="faq-q" aria-expanded="false">J'ai perdu mon code de suivi, que faire ?<i class="ti ti-chevron-down"></i></button><div class="faq-a"><p>Rends-toi sur « Mon suivi », choisis « Par pseudo » et saisis ton pseudo Discord : tu retrouveras ton code, sans que le contenu de tes réponses soit jamais affiché.</p></div></div>
+<div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Comment retrouver une candidature avec mon pseudo ?<i class="ti ti-chevron-down"></i></button><div class="faq-a"><p>Dans « Mon suivi », l'onglet « Par pseudo » liste toutes tes candidatures (code, type, statut, date). Clique sur l'une d'elles pour charger son suivi complet.</p></div></div>
+<h2 class="form-section">Candidatures Staff</h2>
+<div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Quelle ancienneté faut-il avoir ?<i class="ti ti-chevron-down"></i></button><div class="faq-a"><p>En général 1 à 2 mois sur le serveur. Le détail est indiqué dans la fiche de chaque rôle (bouton « En savoir plus »).</p></div></div>
+<div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Y a-t-il une période d'essai ?<i class="ti ti-chevron-down"></i></button><div class="faq-a"><p>Oui. Les nouveaux staffs sont accompagnés pendant une période d'essai avant d'être confirmés dans leur rôle.</p></div></div>
+<div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Les recrutements Staff sont-ils ouverts en permanence ?<i class="ti ti-chevron-down"></i></button><div class="faq-a"><p>Non : seuls les postes marqués « Ouvert » acceptent des candidatures. Si un poste est complet, inscris-toi sur sa liste d'attente.</p></div></div>
+<h2 class="form-section">Hauts Rangs</h2>
+<div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Quand les postes de Haut Rang ouvrent-ils ?<i class="ti ti-chevron-down"></i></button><div class="faq-a"><p>Quand un poste se libère. Il apparaît alors comme « Ouvert » sur la page d'accueil et sur la page Hauts Rangs.</p></div></div>
+<div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Dois-je appartenir au clan du poste visé ?<i class="ti ti-chevron-down"></i></button><div class="faq-a"><p>Ton OC candidat doit être membre du clan concerné et avoir une activité RP régulière.</p></div></div>
+<div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Comment fonctionne la liste d'attente ?<i class="ti ti-chevron-down"></i></button><div class="faq-a"><p>Inscris ton pseudo Discord sur la liste d'un poste indisponible : tu seras mentionné·e sur Discord à son ouverture.</p></div></div>
+<h2 class="form-section">OC supplémentaire</h2>
+<div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Quelle différence entre le 3ème et le 4ème OC ?<i class="ti ti-chevron-down"></i></button><div class="faq-a"><p>Le 4ème OC demande en plus un extrait roleplay obligatoire, car il suppose une activité encore plus soutenue.</p></div></div>
+<div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Ma demande peut-elle être refusée malgré mon activité ?<i class="ti ti-chevron-down"></i></button><div class="faq-a"><p>Oui : le staff regarde aussi la cohérence du concept, l'équilibre entre tes OCs et celui des clans. Un refus est toujours accompagné d'une explication.</p></div></div>
+</main>
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script>
+renderNav('faq');
+document.querySelectorAll('.faq-q').forEach(b => b.addEventListener('click', () => {
+  const it = b.parentElement; it.classList.toggle('open');
+  b.setAttribute('aria-expanded', it.classList.contains('open'));
+}));
+</script>
+</body>
+</html>

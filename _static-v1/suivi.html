@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon suivi · Le Prix de la Trêve</title>
+<meta name="description" content="Candidatures pour Le Prix de la Trêve, serveur de roleplay La Guerre des Clans.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<main>
+<div class="page-head reveal"><h1>Suivre ma candidature</h1><p class="muted">Entre ton code de suivi (TRV-XXXXXX) ou retrouve-le avec ton pseudo Discord.</p></div>
+<div class="center"><div class="toggle"><button class="active" data-mode="code">Par code</button><button data-mode="pseudo">Par pseudo</button></div></div>
+<div class="panel">
+  <form id="form-code" class="row" autocomplete="off"><input class="code-input grow" id="code" type="text" placeholder="TRV-XXXXXX" maxlength="10" aria-label="Code de suivi"><button class="btn" type="submit"><i class="ti ti-search"></i> Vérifier</button></form>
+  <form id="form-pseudo" class="row hidden" autocomplete="off"><input class="grow" id="pseudo" type="text" placeholder="Ton pseudo Discord" aria-label="Pseudo Discord"><button class="btn" type="submit"><i class="ti ti-search"></i> Rechercher</button></form>
+</div>
+<div id="result" style="margin-top:20px"></div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/suivi.js"></script>
+<script>renderNav('suivi');</script>
+</body>
+</html>

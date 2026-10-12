@@ -1,0 +1,652 @@
+/* ==========================================================================
+   NOUVEAU DESIGN PAR GEMINI : AMBIANCE NUIT SACRÉE & ÉTOILES CELESTES
+   ========================================================================== */
+
+:root {
+    --bg-color: #090b10; /* Bleu nuit astral très sombre */
+    --card-bg: #111422; /* Bleu-violet de minuit */
+    --card-border: #1d223a; /* Bordures galaxie discrètes */
+    --text-main: #f3f4f6; /* Blanc lune pur */
+    --text-muted: #8fa0ca; /* Bleu nébuleuse adouci */
+    
+    /* Couleurs Thématiques Magiques */
+    --accent-color: #dfb15b; /* Or stellaire */
+    --accent-hover: #fcd88a; /* Or lumineux au survol */
+    --purple-magic: #635bff; /* Énergie cosmique */
+    
+    --open-color: #2ecc71;
+    --closed-color: #e74c3c;
+    
+    --font-title: 'Cinzel', serif;
+    --font-body: 'Quicksand', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 91, 255, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(223, 177, 91, 0.05) 0px, transparent 50%);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Menu de Navigation épuré (Sans les 3 formulaires) */
+header {
+    background: rgba(9, 11, 16, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--card-border);
+    padding: 1.2rem 8%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text-main);
+}
+
+.logo span {
+    color: var(--accent-color);
+    text-shadow: 0 0 10px rgba(223, 177, 91, 0.3);
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    padding: 6px 0;
+    position: relative;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    color: var(--accent-color);
+}
+
+/* Section Héro Divine */
+.hero {
+    text-align: center;
+    padding: 5rem 10% 4rem 10%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.divine-sparkle {
+    font-size: 2.5rem;
+    animation: float 4s ease-in-out infinite;
+    margin-bottom: 10px;
+}
+
+.hero h1 {
+    font-family: var(--font-title);
+    font-size: 2.8rem;
+    margin: 0 0 15px 0;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, var(--text-main) 30%, var(--accent-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+.description {
+    line-height: 1.7;
+    color: rgba(243, 244, 246, 0.8);
+    font-size: 1.05rem;
+}
+
+/* Panneau d'Administration Araxia */
+.admin-glow-box {
+    background: linear-gradient(135deg, #0d101d 0%, #070912 100%);
+    border: 1px solid rgba(99, 91, 255, 0.3);
+    box-shadow: 0 0 25px rgba(99, 91, 255, 0.1);
+    padding: 25px;
+    border-radius: 14px;
+    margin: 0 auto 40px auto;
+    max-width: 900px;
+}
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.admin-icon { font-size: 2rem; }
+.admin-header h3 { font-family: var(--font-title); color: var(--accent-color); margin: 0; font-size: 1.3rem; }
+.admin-header p { margin: 3px 0 0 0; font-size: 0.85rem; color: var(--text-muted); }
+.admin-controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+
+.control-card { 
+    background: rgba(0,0,0,0.25); 
+    padding: 15px; 
+    border-radius: 8px; 
+    border: 1px solid var(--card-border); 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+}
+
+.control-card label { font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
+
+.btn-toggle { 
+    border: none !important; 
+    padding: 12px 20px; 
+    border-radius: 6px; 
+    color: #fff !important; 
+    font-weight: bold; 
+    cursor: pointer; 
+    font-family: var(--font-body); 
+    font-size: 0.85rem; 
+    transition: all 0.3s; 
+    background: #27ae60 !important;
+    display: inline-block;
+    text-align: center;
+}
+.btn-toggle:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    filter: brightness(1.1);
+}
+.btn-toggle:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Conteneur de cartes principales */
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Cartes (Fini le blanc !) */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(223, 177, 91, 0.25);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 91, 255, 0.05);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.card h3 {
+    font-family: var(--font-title);
+    font-size: 1.4rem;
+    margin: 0;
+    color: var(--text-main);
+}
+
+.card-desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: 25px;
+    flex-grow: 1;
+}
+
+/* Badges Statut */
+.badge {
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+.badge.open {
+    background: rgba(46, 204, 113, 0.15);
+    color: var(--open-color);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.badge.closed {
+    background: rgba(231, 76, 60, 0.15);
+    color: var(--closed-color);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+/* SECTION ADMISSION : Boutons Corrigés (Plus de blanc !) */
+.card-action-zone {
+    width: 100%;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 14px 20px;
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+/* Bouton Actif Doré Cosmique */
+.btn-primary, a.btn {
+    background: linear-gradient(135deg, #c9963b 0%, #aa7b2a 100%);
+    color: #090b10 !important; /* Texte sombre pour un contraste parfait */
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(201, 150, 59, 0.2);
+}
+
+.btn-primary:hover, a.btn:hover {
+    background: linear-gradient(135deg, #dfb15b 0%, #c9963b 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(201, 150, 59, 0.4);
+}
+
+/* Bouton Désactivé / Clos */
+.btn-disabled {
+    background: #191c2e !important;
+    color: #4b5575 !important;
+    border: 1px solid #252b46 !important;
+    cursor: not-allowed !important;
+}
+
+/* Section Registre Guérisseurs */
+.registry-section {
+    max-width: 1000px;
+    margin: 70px auto 40px auto;
+    padding: 0 20px;
+}
+
+.registry-title-zone { text-align: center; margin-bottom: 40px; }
+.registry-title-zone h2 { font-family: var(--font-title); font-size: 1.8rem; color: var(--text-main); margin: 0; }
+.divider-cosmic { width: 100px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-color), transparent); margin: 15px auto; }
+.clan-grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 25px; }
+
+/* Cartes Grimoire Individuelles */
+.clan-medical-card {
+    background: #0f1222;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+}
+
+.clan-medical-card:hover {
+    border-color: rgba(99, 91, 255, 0.2);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+.clan-card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 15px; }
+.clan-card-header h4 { font-family: var(--font-title); margin: 0; font-size: 1.05rem; color: var(--text-main); }
+
+.quota-pill { padding: 3px 9px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+.quota-pill.full { background: rgba(231, 76, 60, 0.1); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.2); }
+.quota-pill.open { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.2); }
+.quota-pill.critical { background: rgba(243, 156, 18, 0.1); color: #f39c12; border: 1px solid rgba(243, 156, 18, 0.2); }
+
+.clan-card-body { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; margin-bottom: 15px; }
+.role-row { font-size: 0.9rem; }
+.label-medic { color: var(--text-muted); font-weight: 600; }
+.name-medic { font-style: italic; color: var(--text-main); margin-left: 4px; }
+.name-medic.none { color: #434c6d; }
+
+.clan-card-footer { border-top: 1px solid var(--card-border); padding-top: 12px; font-size: 0.8rem; text-align: center; font-weight: 600; }
+.text-complet { color: #525f89; }
+.text-dispo a { color: #2ecc71; text-decoration: none; }
+.text-urgent a { color: #f39c12; text-decoration: none; font-weight: bold; }
+.link-inside:hover { text-decoration: underline !important; }
+
+/* Bordures Clans */
+.border-tonnerre { border-top: 3px solid #f1c40f; }
+.border-ombre { border-top: 3px solid #9b59b6; }
+.border-riviere { border-top: 3px solid #3498db; }
+.border-vent { border-top: 3px solid #95a5a6; }
+
+/* Pied de page */
+footer {
+    border-top: 1px solid var(--card-border);
+    padding: 30px 20px;
+    margin-top: 80px;
+    background: #06070a;
+    text-align: center;
+}
+
+footer p { margin: 5px 0; font-size: 0.9rem; color: var(--text-muted); }
+.credits span { color: var(--accent-color); font-weight: 600; }
+
+/* Animations */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* ==========================================================================
+   DESIGN MAGIQUE POUR LES FORMULAIRES & CORRECTION DES BOUTONS BLANCS
+   ========================================================================== */
+
+/* 1. Conteneur principal du Formulaire (Effet Grimoire Astral) */
+.form-container {
+    max-width: 750px;
+    margin: 4rem auto;
+    padding: 2.5rem;
+    background: linear-gradient(145deg, rgba(17, 20, 34, 0.95), rgba(22, 27, 46, 0.95));
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 
+                0 0 30px rgba(99, 91, 255, 0.05); /* Lueur violette discrète */
+}
+
+/* En-tête des formulaires */
+.form-header h1 {
+    font-family: var(--font-title);
+    color: var(--accent-color);
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(223, 177, 91, 0.2);
+}
+
+.form-header .instructions {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 15px 20px;
+    border-radius: 8px;
+    border-left: 3px solid var(--purple-magic);
+}
+
+/* 2. Groupes de Champs (Chaque bloc de question) */
+.form-section {
+    margin-bottom: 2.5rem;
+}
+
+.form-section h2 {
+    font-family: var(--font-title);
+    color: var(--text-main);
+    font-size: 1.25rem;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+}
+
+/* Libellés des questions */
+.input-group label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+/* Champs textuels & Textareas (Design Nuit Étoilée) */
+.input-group input[type="text"],
+.input-group input[type="email"],
+.input-group input[type="url"],
+.input-group select,
+.input-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: #090b10 !important; /* Force le fond sombre */
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    color: var(--text-main) !important;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+/* Focus magique sur les champs */
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 8px rgba(223, 177, 91, 0.15);
+    background-color: #0d1017 !important;
+}
+
+/* Restyler le placeholder */
+::placeholder {
+    color: rgba(143, 160, 202, 0.4);
+}
+
+/* 3. Cases à cocher personnalisées (Grilles de spécialités) */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    background: #090b10;
+    padding: 18px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    margin-top: 5px;
+}
+
+.check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    transition: color 0.2s;
+}
+
+.check-item:hover {
+    color: var(--text-main);
+}
+
+/* Cases de Confirmation en bas de page */
+.checkbox-confirm {
+    flex-direction: row !important;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(99, 91, 255, 0.03);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(99, 91, 255, 0.1);
+    margin-bottom: 12px;
+}
+
+.checkbox-confirm input {
+    margin-top: 4px;
+    cursor: pointer;
+}
+
+/* 4. CORRECTION & STYLISATION DES BOUTONS (OR STELLAIRE) */
+.btn, 
+button[type="submit"],
+input[type="submit"] {
+    display: inline-block;
+    width: 100%; /* S'adapte sur toute la largeur du formulaire */
+    padding: 14px 28px;
+    background: linear-gradient(135deg, var(--accent-color), #c29543) !important; /* Force l'or céleste */
+    color: #090b10 !important; /* Texte sombre pour un contraste parfait */
+    font-family: var(--font-title);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    border: none !important;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(223, 177, 91, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+/* Effets au survol des boutons */
+.btn:hover,
+button[type="submit"]:hover {
+    background: linear-gradient(135deg, var(--accent-hover), var(--accent-color)) !important;
+    box-shadow: 0 6px 20px rgba(223, 177, 91, 0.35);
+    transform: translateY(-2px);
+}
+
+/* Effet au clic */
+.btn:active,
+button[type="submit"]:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(223, 177, 91, 0.2);
+}
+
+/* Bouton désactivé (quand le script envoie les données) */
+.btn:disabled,
+button[type="submit"]:disabled {
+    background: #23293f !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* 5. Messages de Retour (Erreur / Succès) */
+.feedback-message {
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.text-success {
+    color: var(--open-color);
+    background: rgba(46, 204, 113, 0.05);
+    border: 1px dashed rgba(46, 204, 113, 0.2);
+}
+
+.text-error {
+    color: var(--closed-color);
+    background: rgba(231, 76, 60, 0.05);
+    border: 1px dashed rgba(231, 76, 60, 0.2);
+}
+
+.text-error ul {
+    text-align: left;
+    margin: 10px 0 0 0;
+    padding-left: 20px;
+    color: var(--closed-color);
+}
+
+.text-error li {
+    margin: 5px 0;
+}
+
+.form-progress {
+    width: 100%;
+    height: 3px;
+    background: rgba(99, 91, 255, 0.1);
+    border-radius: 2px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.form-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-color), var(--purple-magic));
+    transition: width 0.3s ease;
+}
+
+/* Animations fluides */
+.hr-specialized-section,
+.gest-specialized-section,
+.specialized-section {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Transition des badges */
+.badge {
+    transition: all 0.3s ease;
+}
+
+.badge.open {
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+}
+
+.badge.closed {
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.3);
+}

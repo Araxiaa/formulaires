@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidature Staff | Le Prix de la Trêve</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+    <nav>
+        <div class="logo">Le Prix de la <span>Trêve</span></div>
+        <ul class="nav-links">
+            <li><a href="index.html">Retour au Sanctuaire</a></li>
+        </ul>
+    </nav>
+    </header>
+
+    <main class="form-container">
+        <section class="form-header">
+            <h1>Formulaire de Candidature Staff</h1>
+            <div class="instructions">
+                <p>Bienvenue dans le processus de candidature au staff. Lisez attentivement les instructions avant de commencer :</p>
+                <ul>
+                    <li>Ce formulaire est ouvert uniquement durant les vagues de recrutement annoncées officiellement.</li>
+                    <li>Vous pouvez choisir <strong>jusqu'à deux rôles</strong> par candidature.</li>
+                    <li>Le staff et les Fondateurs se réservent le droit de refuser toute candidature sans avoir à se justifier.</li>
+                    <li>Toute candidature incomplète sera automatiquement refusée.</li>
+                </ul>
+            </div>
+        </section>
+
+        <form id="staffForm">
+
+            <div class="form-progress">
+                <div class="form-progress-bar" id="progressBar" style="width: 10%;"></div>
+            </div>
+            
+            <div class="form-section">
+                <h2>📋 Informations Générales</h2>
+                
+                <div class="input-group">
+                    <label for="pseudo">1. Votre pseudo Discord *</label>
+                    <input type="text" id="pseudo" name="pseudo" placeholder="Ex: .araxia." required>
+                </div>
+
+                <div class="input-group">
+                    <label for="anciennete">2. Depuis combien de temps êtes-vous membre du serveur ? *</label>
+                    <select id="anciennete" name="anciennete" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="Moins d'un mois">Moins d'un mois</option>
+                        <option value="1 à 3 mois">1 à 3 mois</option>
+                        <option value="3 à 6 mois">3 à 6 mois</option>
+                        <option value="Plus de 6 mois">Plus de 6 mois</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>3. Quel(s) rôle(s) visez-vous ? (Maximum 2) *</label>
+                    <p class="checkbox-hint">Cochez les rôles pour faire apparaître leurs questions spécifiques.</p>
+                    <div class="checkbox-grid">
+                        <label class="check-item"><input type="checkbox" name="roles" value="helper"> Helper</label>
+                        <label class="check-item"><input type="checkbox" name="roles" value="correcteur"> Correcteur fiche</label>
+                        <label class="check-item"><input type="checkbox" name="roles" value="geneticien"> Généticien</label>
+                        <label class="check-item"><input type="checkbox" name="roles" value="narrateur"> Narrateur</label>
+                        <label class="check-item"><input type="checkbox" name="roles" value="pnj"> Gestion PNJ</label>
+                        <label class="check-item"><input type="checkbox" name="roles" value="veilleur"> Veilleur</label>
+                        <label class="check-item"><input type="checkbox" name="roles" value="batisseur"> Bâtisseur</label>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="age">4. Quel âge avez-vous ? *</label>
+                    <select id="age" name="age" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="Moins de 16 ans">Moins de 16 ans</option>
+                        <option value="16 à 18 ans">16 à 18 ans</option>
+                        <option value="Plus de 18 ans">Plus de 18 ans</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="dispo">5. Quelle est votre disponibilité moyenne par semaine ? *</label>
+                    <select id="dispo" name="dispo" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="1 à 2 jours par semaine">1 à 2 jours par semaine</option>
+                        <option value="3 à 4 jours par semaine">3 à 4 jours par semaine</option>
+                        <option value="5 à 7 jours par semaine">5 à 7 jours par semaine</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="experience">6. Avez-vous déjà été staff sur un autre serveur Discord ? *</label>
+                    <select id="experience" name="experience" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="Oui">Oui</option>
+                        <option value="Non">Non</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="experience_details">6.1. Si oui, quel rôle et pendant combien de temps ?</label>
+                    <textarea id="experience_details" name="experience_details" rows="2" placeholder="Laissez vide si vous avez répondu Non..."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="q7">7. Comment décririez-vous votre façon de gérer un conflit entre deux membres ? *</label>
+                    <textarea id="q7" name="q7" rows="3" required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="q8">8. Comment réagissez-vous face à une critique de votre travail par un supérieur ? *</label>
+                    <textarea id="q8" name="q8" rows="3" required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="q9">9. Pourquoi souhaitez-vous rejoindre l'équipe staff de ce serveur ? *</label>
+                    <textarea id="q9" name="q9" rows="3" required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="q10">10. Qu'est-ce que vous apporteriez à l'équipe que vous ne retrouvez pas forcément chez les autres ? *</label>
+                    <textarea id="q10" name="q10" rows="3" required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="q11">11. Selon vous, quel est le rôle d'un staff au sein d'un serveur communautaire ? *</label>
+                    <textarea id="q11" name="q11" rows="3" required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="q12">12. Quelle différence faites-vous entre votre rôle de staff et votre rôle de joueur ? Comment gérez-vous cette double casquette ? *</label>
+                    <textarea id="q12" name="q12" rows="4" required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="q13">13. Un membre de la communauté que vous appréciez beaucoup enfreint une règle du serveur. Comment réagissez-vous ? *</label>
+                    <textarea id="q13" name="q13" rows="4" required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="q14">14. Vous n'êtes pas d'accord avec une décision prise par un Fondateur ou un Modérateur. Comment exprimez-vous votre désaccord ? *</label>
+                    <textarea id="q14" name="q14" rows="4" required></textarea>
+                </div>
+            </div>
+
+            <div id="section-helper" class="form-section specialized-section">
+                <h2>🌱 Spécialité : Helper</h2>
+                <div class="input-group"><label>1. Un nouveau membre est perdu et pose de nombreuses questions en même temps dans le ticket. Comment gérez-vous la situation ? *</label><textarea name="helper_1" rows="3"></textarea></div>
+                <div class="input-group"><label>2. Un membre devient agressif envers vous dans un ticket. Que faites-vous ? *</label><textarea name="helper_2" rows="3"></textarea></div>
+                <div class="input-group"><label>3. Un membre vous contacte en ticket pour signaler un autre membre qui le harcèle en message privé. Vous n'avez aucune preuve tangible. Comment gérez-vous la situation ? *</label><textarea name="helper_3" rows="3"></textarea></div>
+                <div class="input-group"><label>4. Comment vous assureriez-vous qu'un nouveau membre comprend bien le fonctionnement du serveur et ses règles sans le noyer d'informations ? *</label><textarea name="helper_4" rows="3"></textarea></div>
+            </div>
+
+            <div id="section-correcteur" class="form-section specialized-section">
+                <h2>📝 Spécialité : Correcteur Fiche</h2>
+                <div class="input-group"><label>1. Qu'est-ce qui fait selon vous une bonne fiche de personnage ? *</label><textarea name="correcteur_1" rows="3"></textarea></div>
+                <div class="input-group"><label>2. Une fiche est bien écrite mais contient des incohérences avec le lore du serveur. Comment procédez-vous ? *</label><textarea name="correcteur_2" rows="3"></textarea></div>
+                <div class="input-group"><label>3. Un joueur revient pour la troisième fois avec la même erreur sur sa fiche malgré vos corrections précédentes. Comment réagissez-vous ? *</label><textarea name="correcteur_3" rows="3"></textarea></div>
+                <div class="input-group"><label>4. Selon vous, quelle est la limite entre une correction justifiée et une ingérence dans la créativité du joueur ? *</label><textarea name="correcteur_4" rows="3"></textarea></div>
+            </div>
+
+            <div id="section-geneticien" class="form-section specialized-section">
+                <h2>🧬 Spécialité : Généticien</h2>
+                <div class="input-group">
+                    <label>1. Quel est votre niveau de connaissance en génétique féline ? *</label>
+                    <select name="geneticien_1">
+                        <option value="" disabled selected>Choisissez...</option>
+                        <option value="Débutant">Débutant</option>
+                        <option value="Intermédiaire">Intermédiaire</option>
+                        <option value="Avancé">Avancé</option>
+                        <option value="Expert">Expert</option>
+                    </select>
+                </div>
+                <div class="input-group"><label>2. D'où viennent vos connaissances en génétique féline ? *</label><textarea name="geneticien_2" rows="3"></textarea></div>
+                <div class="input-group"><label>3. Un joueur souhaite un pelage biologiquement impossible selon le génotype de ses parents. Comment expliquez-vous cela sans décourager le joueur ? *</label><textarea name="geneticien_3" rows="3"></textarea></div>
+                <div class="input-group">
+                    <label>4. Êtes-vous à l'aise pour expliquer des concepts génétiques complexes de manière simple et accessible à des joueurs non initiés ? *</label>
+                    <select name="geneticien_4">
+                        <option value="" disabled selected>Choisissez...</option>
+                        <option value="Oui, tout à fait">Oui, tout à fait</option>
+                        <option value="Plutôt oui">Plutôt oui</option>
+                        <option value="Plutôt non">Plutôt non</option>
+                        <option value="Non, pas vraiment">Non, pas vraiment</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="section-narrateur" class="form-section specialized-section">
+                <h2>🦅 Spécialité : Narrateur</h2>
+                <div class="input-group"><label>1. Proposez brièvement une idée d'événement narratif adaptée au contexte actuel du serveur. *</label><textarea name="narrateur_1" rows="3"></textarea></div>
+                <div class="input-group"><label>2. Comment gérez-vous un événement narratif qui ne se passe pas comme prévu en jeu ? *</label><textarea name="narrateur_2" rows="3"></textarea></div>
+                <div class="input-group"><label>3. Comment équilibrez-vous un événement narratif pour qu'il soit impactant sans pour autant avantager ou désavantager un clan en particulier ? *</label><textarea name="narrateur_3" rows="3"></textarea></div>
+                <div class="input-group"><label>4. Un joueur se plaint que son OC a été impacté par un événement narratif sans son accord préalable. Comment gérez-vous cette situation ? *</label><textarea name="narrateur_4" rows="3"></textarea></div>
+            </div>
+
+            <div id="section-pnj" class="form-section specialized-section">
+                <h2>🐾 Spécialité : Gestion PNJ</h2>
+                <div class="input-group"><label>1. Comment organiseriez-vous la population PNJ d'un clan qui commence à être surpeuplé ? *</label><textarea name="pnj_1" rows="3"></textarea></div>
+                <div class="input-group"><label>2. Un joueur souhaite intégrer une famille PNJ déjà existante mais cela créerait un doublon. Comment gérez-vous la situation ? *</label><textarea name="pnj_2" rows="3"></textarea></div>
+                <div class="input-group"><label>3. Comment vous assureriez-vous que les tâches PNJ proposées aux joueurs restent variées et intéressantes sur le long terme ? *</label><textarea name="pnj_3" rows="3"></textarea></div>
+                <div class="input-group"><label>4. Un joueur souhaite créer un PNJ avec un lore très développé qui empiète sur l'histoire officielle du clan. Comment réagissez-vous ? *</label><textarea name="pnj_4" rows="3"></textarea></div>
+            </div>
+
+            <div id="section-veilleur" class="form-section specialized-section">
+                <h2>⏳ Spécialité : Veilleur</h2>
+                <div class="input-group"><label>1. Comment planifieriez-vous une transition de saison en accord avec les événements narratifs en cours ? *</label><textarea name="veilleur_1" rows="3"></textarea></div>
+                <div class="input-group">
+                    <label>2. Êtes-vous à l'aise pour rédiger des annonces immersives dans l'univers de La Guerre des Clans ? *</label>
+                    <select name="veilleur_2">
+                        <option value="" disabled selected>Choisissez...</option>
+                        <option value="Oui, tout à fait">Oui, tout à fait</option>
+                        <option value="Plutôt oui">Plutôt oui</option>
+                        <option value="Plutôt non">Plutôt non</option>
+                        <option value="Non, pas vraiment">Non, pas vraiment</option>
+                    </select>
+                </div>
+                <div class="input-group"><label>3. Un événement météorologique imprévu doit être annoncé en urgence car il impacte directement une scène RP en cours. Comment procédez-vous ? *</label><textarea name="veilleur_3" rows="3"></textarea></div>
+                <div class="input-group"><label>4. Comment vous coordonneriez-vous avec les Bâtisseurs si un événement climatique devait modifier physiquement un territoire ? *</label><textarea name="veilleur_4" rows="3"></textarea></div>
+            </div>
+
+            <div id="section-batisseur" class="form-section specialized-section">
+                <h2>🧱 Spécialité : Bâtisseur</h2>
+                <div class="input-group"><label>1. Un Narrateur vous soumet une idée de modification territoriale qui vous semble incohérente avec la carte actuelle. Comment réagissez-vous ? *</label><textarea name="batisseur_1" rows="3"></textarea></div>
+                <div class="input-group">
+                    <label>2. Êtes-vous à l'aise avec la gestion et la mise à jour de cartes et de territoires ? *</label>
+                    <select name="batisseur_2">
+                        <option value="" disabled selected>Choisissez...</option>
+                        <option value="Oui, tout à fait">Oui, tout à fait</option>
+                        <option value="Plutôt oui">Plutôt oui</option>
+                        <option value="Plutôt non">Plutôt non</option>
+                        <option value="Non, pas vraiment">Non, pas vraiment</option>
+                    </select>
+                </div>
+                <div class="input-group"><label>3. Un joueur souhaite que son OC découvre un lieu caché non répertorié sur la carte actuelle. Comment intégrez-vous cette demande dans le lore existant ? *</label><textarea name="batisseur_3" rows="3"></textarea></div>
+                <div class="input-group"><label>4. Comment vous assureriez-vous que les modifications territoriales restent cohérentes avec le contexte narratif actuel du serveur ? *</label><textarea name="batisseur_4" rows="3"></textarea></div>
+            </div>
+
+
+            <div class="form-section">
+                <h2>✨ Finalisation</h2>
+                
+                <div class="input-group checkbox-confirm">
+                    <label><input type="checkbox" name="accept_rules" value="Je confirme" required> 1. Confirmez-vous avoir lu et accepté le règlement général du serveur ? *</label>
+                </div>
+
+                <div class="input-group checkbox-confirm">
+                    <label><input type="checkbox" name="accept_sincerity" value="Je confirme" required> 2. Confirmez-vous que toutes vos réponses sont sincères ? *</label>
+                </div>
+
+                <div class="input-group">
+                    <label for="notes_sup">3. Y a-t-il autre chose que vous souhaitez ajouter à votre candidature ? (facultatif)</label>
+                    <textarea id="notes_sup" name="notes_sup" rows="3"></textarea>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn">Envoyer ma candidature</button>
+                <p id="formFeedback" class="feedback-message"></p>
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 <strong>Le Prix de la Trêve</strong> - Tous droits réservés.</p>
+            <p class="credits">Fondateurs : <span>.araxia.</span> & <span>lavnd.13</span> | Site web par : <span>.araxia.</span></p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

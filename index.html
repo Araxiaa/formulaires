@@ -1,108 +1,21 @@
-<!DOCTYPE html>
-<html lang="fr" data-theme="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Postes — Le Prix de la Trêve</title>
-  <link rel="stylesheet" href="./css/main.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-  <script>
-    (function(){
-      var t = localStorage.getItem('lpdt_theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', t);
-    })();
-  </script>
-</head>
-<body>
-
-<nav class="nav" id="nav"></nav>
-
-<header class="hero">
-  <p class="hero-eyebrow">Serveur RP · La Guerre des Clans</p>
-  <h1 class="hero-title">Le Prix de la Trêve</h1>
-  <p class="hero-sub" id="hero-desc">Trois clans, une communauté passionnée. Rejoins-nous sur Discord et découvre les postes disponibles ci-dessous.</p>
-  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:1.25rem;">
-    <a id="discord-btn" href="#" class="btn btn-primary" target="_blank" rel="noopener">Rejoindre le Discord ↗</a>
-    <a href="./rangs.html" class="btn btn-ghost">Voir les Hauts Rangs</a>
-  </div>
-</header>
-
-<main class="main">
-
-  <!-- Switcher Staff / Hauts Rangs -->
-  <div class="type-switcher">
-    <button class="type-btn active" data-type="staff"  onclick="switchType('staff', this)">Staff</button>
-    <button class="type-btn"        data-type="hr"     onclick="switchType('hr', this)">Hauts Rangs</button>
-  </div>
-
-  <!-- Vue Staff -->
-  <div class="subview active" id="sv-staff">
-    <div class="stats-bar" id="stats-staff">
-      <div class="stat-card"><div class="stat-num" id="sn-poles">—</div><div class="stat-lbl">Pôles</div></div>
-      <div class="stat-card"><div class="stat-num" id="sn-ouv">—</div><div class="stat-lbl">Postes ouverts</div></div>
-      <div class="stat-card"><div class="stat-num" id="sn-places">—</div><div class="stat-lbl">Places disponibles</div></div>
-      <div class="stat-card"><div class="stat-num" id="sn-comp">—</div><div class="stat-lbl">Complets</div></div>
-    </div>
-    <div id="staff-sections">
-      <div class="loading-wrap"><div class="spinner"></div>Chargement des postes…</div>
-    </div>
-  </div>
-
-  <!-- Vue Hauts Rangs -->
-  <div class="subview" id="sv-hr">
-    <div class="stats-bar">
-      <div class="stat-card"><div class="stat-num">3</div><div class="stat-lbl">Clans actifs</div></div>
-      <div class="stat-card"><div class="stat-num" id="hr-ouv">—</div><div class="stat-lbl">Poste(s) ouvert(s)</div></div>
-      <div class="stat-card"><div class="stat-num" id="hr-ind">—</div><div class="stat-lbl">Occupés</div></div>
-      <div class="stat-card"><div class="stat-num" id="hr-total">—</div><div class="stat-lbl">Rangs totaux</div></div>
-    </div>
-    <div id="hr-sections">
-      <div class="loading-wrap"><div class="spinner"></div>Chargement des hauts rangs…</div>
-    </div>
-  </div>
-
-</main>
-
-<!-- Modale liste d'attente -->
-<div class="modal-overlay" id="modal-attente">
-  <div class="modal-box">
-    <h2 class="modal-title">Liste d'attente</h2>
-    <p class="modal-sub" id="modal-attente-sub">Laisse ton pseudo Discord pour être notifié·e dès qu'une place se libère sur ce poste.</p>
-    <div class="form-group">
-      <label class="form-label" for="attente-pseudo">Ton pseudo Discord</label>
-      <input type="text" id="attente-pseudo" placeholder="pseudo ou identifiant Discord">
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-primary" onclick="submitAttente()">S'inscrire</button>
-      <button class="btn btn-ghost"   onclick="closeModal()">Annuler</button>
-    </div>
-  </div>
-</div>
-
-<div id="footer"></div>
-
-<!-- Modale détail d'un rôle staff -->
-<div class="modal-overlay" id="modal-role-detail">
-  <div class="modal-box" style="max-width:560px;max-height:85vh;overflow-y:auto;">
-    <div class="role-popup-header" id="popup-header"></div>
-    <div id="popup-content"></div>
-    <div class="modal-actions" style="margin-top:1.25rem;position:sticky;bottom:0;background:var(--bg-card);padding:.75rem 0 0;">
-      <a id="popup-apply-btn" href="#" class="btn btn-primary">Candidater pour ce rôle →</a>
-      <button class="btn btn-ghost" onclick="closeRolePopup()">Fermer</button>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="./js/config.js"></script>
-<script src="./js/data.js"></script>
-<script src="./js/utils.js"></script>
-<script src="./js/postes.js"></script>
-
-<script>
-  document.getElementById('modal-role-detail')?.addEventListener('click', function(e) {
-    if (e.target === this) closeRolePopup();
-  });
-</script>
-</body>
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Le Prix de la Trêve — rejoins l'équipe : candidatures Staff, Hauts Rangs et OC supplémentaires." />
+    <meta name="theme-color" content="#0c1210" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <title>Le Prix de la Trêve — Recrutement</title>
+    <script>
+      try {
+        var t = localStorage.getItem('theme') || 'sombre';
+        if (t === 'sombre') document.documentElement.setAttribute('data-theme', 'sombre');
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'sombre'); }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

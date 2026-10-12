@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidature Haut Rang | Le Prix de la Trêve</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+    <nav>
+        <div class="logo">Le Prix de la <span>Trêve</span></div>
+        <ul class="nav-links">
+            <li><a href="index.html">Retour au Sanctuaire</a></li>
+        </ul>
+    </nav>
+    </header>
+
+    <main class="form-container">
+        <section class="form-header">
+            <h1>Candidature aux Hauts Rangs</h1>
+            <div class="instructions">
+                <p>Bienvenue dans le processus de candidature pour un haut rang. Lisez attentivement les instructions avant de commencer :</p>
+                <ul>
+                    <li>Ce formulaire doit être rempli via un ticket, <strong>AVANT</strong> de déposer votre fiche en correction.</li>
+                    <li>Un joueur peut posséder au maximum : un rang <strong>Chef ou Lieutenant</strong> ET un rang <strong>Guérisseur ou Apprenti Guérisseur</strong>.</li>
+                    <li>Toute candidature incomplète sera automatiquement refusée.</li>
+                    <li>Le staff se réserve le droit de refuser toute candidature sans avoir à se justifier.</li>
+                </ul>
+            </div>
+        </section>
+
+        <form id="hautRangForm">
+
+            <div class="form-progress">
+                <div class="form-progress-bar" id="progressBar" style="width: 10%;"></div>
+            </div>
+            
+            <div class="form-section">
+                <h2>🐾 Le Joueur</h2>
+                <p class="section-hint">Ces questions vous concernent en tant que joueur, indépendamment de votre OC.</p>
+                
+                <div class="input-group">
+                    <label for="hr_pseudo">11. Votre pseudo Discord *</label>
+                    <input type="text" id="hr_pseudo" name="hr_pseudo" placeholder="Ex: .araxia." required>
+                </div>
+
+                <div class="input-group">
+                    <label for="experience_rp">1. Depuis combien de temps faites-vous du role-play écrit ? *</label>
+                    <select id="experience_rp" name="experience_rp" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="Moins d'un an">Moins d'un an</option>
+                        <option value="1 à 2 ans">1 à 2 ans</option>
+                        <option value="3 à 5 ans">3 à 5 ans</option>
+                        <option value="Plus de 5 ans">Plus de 5 ans</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="ancien_hr">2. Avez-vous déjà occupé un haut rang sur un autre serveur RP ? *</label>
+                    <select id="ancien_hr" name="ancien_hr" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="Oui">Oui</option>
+                        <option value="Non">Non</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="ancien_hr_details">2.1. Si oui, lequel et pendant combien de temps ?</label>
+                    <textarea id="ancien_hr_details" name="ancien_hr_details" rows="2" placeholder="Laissez vide si vous avez répondu Non..."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="hr_dispo">3. Quelle est votre disponibilité moyenne par semaine ? *</label>
+                    <select id="hr_dispo" name="hr_dispo" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="1 à 2 jours par semaine">1 à 2 jours par semaine</option>
+                        <option value="3 à 4 jours par semaine">3 à 4 jours par semaine</option>
+                        <option value="5 à 7 jours par semaine">5 à 7 jours par semaine</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="conflit_narratif">4. Êtes-vous à l'aise pour gérer des situations de conflit narratif avec d'autres joueurs ? *</label>
+                    <select id="conflit_narratif" name="conflit_narratif" required>
+                        <option value="" disabled selected>Choisissez une option...</option>
+                        <option value="Oui, tout à fait">Oui, tout à fait</option>
+                        <option value="Plutôt oui">Plutôt oui</option>
+                        <option value="Plutôt non">Plutôt non</option>
+                        <option value="Non, pas vraiment">Non, pas vraiment</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="critique_staff">5. Comment réagissez-vous face à une critique ou un retour négatif du staff sur votre jeu ? *</label>
+                    <textarea id="critique_staff" name="critique_staff" rows="3" required></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>🐾 L'OC (Votre Personnage)</h2>
+                <p class="section-hint">Ces questions concernent le personnage que vous souhaitez jouer.</p>
+
+                <div class="input-group">
+                    <label for="rang_vise">12. Le rang visé *</label>
+                    <select id="rang_vise" name="rang_vise" required>
+                        <option value="" disabled selected>Choisissez le poste...</option>
+                        <option value="Chef">Chef</option>
+                        <option value="Lieutenant">Lieutenant</option>
+                        <option value="Guerisseur">Guérisseur</option>
+                        <option value="Apprenti-Guerisseur">Apprenti-Guérisseur</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="clan_vise">13. Le clan concerné *</label>
+                    <select id="clan_vise" name="clan_vise" required>
+                        <option value="" disabled selected>Choisissez le Clan...</option>
+                        <option value="Clan du Tonnerre">Clan du Tonnerre</option>
+                        <option value="Clan du Vent">Clan du Vent</option>
+                        <option value="Clan de l'Ombre">Clan de l'Ombre</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="nom_oc">6. Quel est le nom complet de votre OC ? *</label>
+                    <input type="text" id="nom_oc" name="nom_oc" placeholder="Ex: Chaton, Apprenti, Adulte" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="mots_cles_oc">7. Décrivez brièvement le caractère de votre OC en 6 mots clés *</label>
+                    <p class="checkbox-hint">(3 qualités minimum, 3 défauts minimum)</p>
+                    <input type="text" id="mots_cles_oc" name="mots_cles_oc" placeholder="Ex: Loyal, Calme, Protecteur / Orgueilleux, Impatient, Rancunier" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="motivation_oc">8. Quelle est la grande motivation de votre OC ? Qu'est-ce qui le pousse à vouloir ce rang ? *</label>
+                    <textarea id="motivation_oc" name="motivation_oc" rows="3" required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="faiblesse_oc">9. Quelle est la plus grande faiblesse de votre OC dans ce rang ? Comment compte-t-il la surmonter ? *</label>
+                    <textarea id="faiblesse_oc" name="faiblesse_oc" rows="3" required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="silence_ancetres">10. Comment votre OC se positionne-t-il vis-à-vis du silence du Clan des Étoiles ? *</label>
+                    <textarea id="silence_ancetres" name="silence_ancetres" rows="3" required></textarea>
+                </div>
+            </div>
+
+            <div id="section-chef" class="form-section hr-specialized-section" style="display: none;">
+                <h2>👑 Questions Spécifiques — Chef</h2>
+                <div class="input-group"><label>1. Comment votre OC compte-t-il gérer les relations avec les autres clans dans ce contexte de tension générale ? *</label><textarea name="chef_1" rows="3"></textarea></div>
+                <div class="input-group"><label>2. Une décision difficile doit être prise rapidement sans pouvoir consulter votre lieutenant. Comment réagit votre OC ? Donnez un exemple concret. *</label><textarea name="chef_2" rows="3"></textarea></div>
+                <div class="input-group"><label>3. Un membre de votre clan remet publiquement en question une de vos décisions devant les autres guerriers. Comment votre OC gère-t-il cette situation ? *</label><textarea name="chef_3" rows="3"></textarea></div>
+                <div class="input-group"><label>4. Quelle vision votre OC a-t-il pour son clan dans les prochaines saisons ? *</label><textarea name="chef_4" rows="3"></textarea></div>
+            </div>
+
+            <div id="section-lieutenant" class="form-section hr-specialized-section" style="display: none;">
+                <h2>🛡️ Questions Spécifiques — Lieutenant</h2>
+                <div class="input-group"><label>1. Quel est le rôle du lieutenant selon votre OC ? Comment définit-il sa relation avec le chef du clan ? *</label><textarea name="lieutenant_1" rows="3"></textarea></div>
+                <div class="input-group"><label>2. Votre chef prend une décision avec laquelle vous n'êtes pas d'accord. Comment votre OC réagit-il en privé et en public ? *</label><textarea name="lieutenant_2" rows="3"></textarea></div>
+                <div class="input-group"><label>3. Vous devez organiser les patrouilles et les chasses avec un clan affaibli par des blessures récentes. Comment procédez-vous ? *</label><textarea name="lieutenant_3" rows="3"></textarea></div>
+                <div class="input-group"><label>4. Le chef est absent ou incapacité. Une menace se présente à la frontière. Que fait votre OC ? *</label><textarea name="lieutenant_4" rows="3"></textarea></div>
+            </div>
+
+            <div id="section-guerisseur" class="form-section hr-specialized-section" style="display: none;">
+                <h2>🌿 Questions Spécifiques — Guérisseur</h2>
+                <div class="input-group"><label>1. Comment votre OC perçoit-il son rôle dans un clan dont le Clan des Étoiles s'est tu ? Sa foi est-elle intacte ou ébranlée ? *</label><textarea name="guerisseur_1" rows="3"></textarea></div>
+                <div class="input-group"><label>2. Deux membres sont gravement blessés en même temps, mais vous n'avez des ressources que pour en soigner un seul. Comment votre OC choisit-il ? *</label><textarea name="guerisseur_2" rows="3"></textarea></div>
+                <div class="input-group"><label>3. Un guerrier refuse catégoriquement vos soins. Comment votre OC réagit-il ? *</label><textarea name="guerisseur_3" rows="3"></textarea></div>
+                <div class="input-group"><label>4. Quelles sont les connaissances en herboristerie de votre OC ? A-t-il des lacunes à combler ? *</label><textarea name="guerisseur_4" rows="3"></textarea></div>
+            </div>
+
+            <div id="section-apprenti-guerisseur" class="form-section hr-specialized-section" style="display: none;">
+                <h2>🌱 Questions Spécifiques — Apprenti Guérisseur</h2>
+                <div class="input-group"><label>1. Pourquoi votre OC a-t-il été attiré vers la médecine plutôt que vers la voie du guerrier ? Est-ce un choix ou une vocation ? *</label><textarea name="app_guerisseur_1" rows="3"></textarea></div>
+                <div class="input-group"><label>2. Votre OC fait une erreur de dosage sur un patient. Comment réagit-il face à cette erreur ? *</label><textarea name="app_guerisseur_2" rows="3"></textarea></div>
+                <div class="input-group"><label>3. Comment votre OC envisage-t-il sa relation avec son mentor ? Est-il plutôt dans l'observation, la question ou l'initiative ? *</label><textarea name="app_guerisseur_3" rows="3"></textarea></div>
+                <div class="input-group"><label>4. Le code du guérisseur lui interdit d'avoir un compagnon ou des petits. Comment votre OC se positionne-t-il face à cette règle ? *</label><textarea name="app_guerisseur_4" rows="3"></textarea></div>
+            </div>
+
+            <div class="form-section">
+                <h2>✨ Finalisation</h2>
+                
+                <div class="input-group checkbox-confirm">
+                    <label><input type="checkbox" name="hr_accept_rules" value="Je confirme" required> 1. Confirmez-vous avoir lu et accepté le règlement général et le règlement RP du serveur ? *</label>
+                </div>
+
+                <div class="input-group checkbox-confirm">
+                    <label><input type="checkbox" name="hr_accept_sincerity" value="Je confirme" required> 2. Confirmez-vous que toutes vos réponses sont sincères et reflètent réellement votre façon de jouer ? *</label>
+                </div>
+
+                <div class="input-group">
+                    <label for="hr_notes_sup">3. Y a-t-il autre chose que vous souhaitez ajouter à votre candidature ? (Optionnel)</label>
+                    <textarea id="hr_notes_sup" name="hr_notes_sup" rows="3"></textarea>
+                </div>
+
+                <button type="submit" id="hrSubmitBtn" class="btn">Envoyer mon dossier</button>
+                <p id="hrFormFeedback" class="feedback-message"></p>
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 <strong>Le Prix de la Trêve</strong> - Tous droits réservés.</p>
+            <p class="credits">Fondateurs : <span>.araxia.</span> & <span>lavnd.13</span> | Site web par : <span>.araxia.</span></p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

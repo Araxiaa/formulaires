@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portail Céleste | Le Prix de la Trêve</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">Le Prix de la <span>Trêve</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Sanctuaire</a></li>
+                </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="divine-sparkle">✨</div>
+                <h1>Le Clan des Étoiles vous observe</h1>
+                <p class="subtitle">Portail officiel & Registres du Royaume</p>
+                <p class="description">Que vous souhaitiez guider la communauté depuis la pénombre, mener les fiers guerriers vers leur destin, ou soigner les plaies du passé, tracez votre propre voie.</p>
+            </div>
+        </section>
+
+        <section class="admin-panel admin-glow-box">
+            <div class="admin-header">
+                <span class="admin-icon">🔮</span>
+                <div>
+                    <h3>Outils Cosmiques d'Araxia</h3>
+                    <p>Contrôlez l'ouverture temporelle des vagues de recrutement célestes.</p>
+                </div>
+            </div>
+            <div class="admin-controls-grid">
+                <div class="control-card">
+                    <label>Session Recrutement Staff</label>
+                    <button id="toggle-staff-btn" class="btn-toggle">Bascule dynamique</button>
+                </div>
+                <div class="control-card">
+                    <label>Session Recrutement Gestion</label>
+                    <button id="toggle-gestion-btn" class="btn-toggle">Bascule dynamique</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="cards-container">
+            <div class="card" id="card-staff">
+                <div class="card-header">
+                    <h3>Équipe du Staff</h3>
+                    <span class="badge" id="badge-staff">Alignement des astres...</span>
+                </div>
+                <p class="card-desc">Veillez sur l'harmonie des frontières, appliquez les lois sacrées du serveur et guidez les nouveaux arrivants.</p>
+                <div id="action-staff" class="card-action-zone"></div>
+            </div>
+
+            <div class="card" id="card-haut-rang">
+                <div class="card-header">
+                    <h3>Grands Lieutenants</h3>
+                    <span class="badge open">Immuable</span>
+                </div>
+                <p class="card-desc">Lieutenants, Meneurs... Postulez pour incarner l'élite politique, spirituelle et stratégique de vos Clans respectifs.</p>
+                <div class="card-action-zone">
+                    <a href="haut-rang.html" class="btn btn-primary">Dresser un Dossier</a>
+                </div>
+            </div>
+
+            <div class="card" id="card-gestion">
+                <div class="card-header">
+                    <h3>Sages de Gestion</h3>
+                    <span class="badge" id="badge-gestion">Alignement des astres...</span>
+                </div>
+                <p class="card-desc">Validation anatomique des fiches de personnages, animation d'événements divins ou développement magique.</p>
+                <div id="action-gestion" class="card-action-zone"></div>
+            </div>
+        </section>
+
+        <section class="registry-section">
+            <div class="registry-title-zone">
+                <h2>✨ Chroniques des Guérisseurs & Rebouteux ✨</h2>
+                <div class="divider-cosmic"></div>
+                <p>Répertoire mystique et suivi démographique de la médecine des Clans</p>
+            </div>
+
+            <div class="clan-grid-cards">
+                <div class="clan-medical-card border-tonnerre">
+                    <div class="clan-card-header">
+                        <h4>⚡ Clan du Tonnerre</h4>
+                        <div class="quota-pill open">1 / 2</div>
+                    </div>
+                    <div class="clan-card-body">
+                        <div class="role-row"><span class="label-medic">Guérisseur :</span> <span class="name-medic">Aube du Myosotis</span></div>
+                        <div class="role-row"><span class="label-medic">Apprenti :</span> <span class="name-medic">Aucun</span></div>
+                    </div>
+                    <div class="clan-card-footer text-dispo"><a href="haut-rang.html" class="link-inside">Postuler (Apprenti) →</a></div>
+                </div>
+
+                <div class="clan-medical-card border-ombre">
+                    <div class="clan-card-header">
+                        <h4>👁️ Clan de l'Ombre</h4>
+                        <div class="quota-pill full">2 / 2</div>
+                    </div>
+                    <div class="clan-card-body">
+                        <div class="role-row"><span class="label-medic">Guérisseur :</span> <span class="name-medic">Illusion du Puceron</span></div>
+                        <div class="role-row"><span class="label-medic">Apprenti :</span> <span class="name-medic none">Réservé...</span></div>
+                    </div>
+                    <div class="clan-card-footer text-dispo">"Complet"</div>
+                </div>
+
+                <div class="clan-medical-card border-vent">
+                    <div class="clan-card-header">
+                        <h4>💨 Clan du Vent</h4>
+                        <div class="quota-pill full">1 / 1</div>
+                    </div>
+                    <div class="clan-card-body">
+                        <div class="role-row"><span class="label-medic">Guérisseur :</span> <span class="name-medic">Chant de Cigale</span></div>
+                        <div class="role-row"><span class="label-medic">Apprenti :</span> <span class="name-medic none">Aucun</span></div>
+                    </div>
+                    <div class="clan-card-footer text-dispo">"Complet"</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 <strong>Le Prix de la Trêve</strong> - Tous droits réservés.</p>
+            <p class="credits">Fondateurs : <span>.araxia.</span> & <span>lavnd.13</span> | Sanctuaire Sacré</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
