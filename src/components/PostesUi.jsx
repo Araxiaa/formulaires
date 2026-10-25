@@ -16,6 +16,35 @@ export function SceauGroupe({ groupe, petit }) {
   )
 }
 
+export const effectifOption = (o) => {
+  const total = o.places_total ?? 0
+  const libres = Math.min(o.places_dispo ?? total, total)
+  return { total, libres, pris: total - libres }
+}
+
+// Spécialité facultative (Régisseur·se, Généticien·ne, Gestion PNJ) : effectif + missions
+export function CarteOption({ option, poste, groupe, delai = 0 }) {
+  const { total, libres, pris } = effectifOption(option)
+  return (
+    <Apparition delai={delai} className="carte carte-option" style={{ '--couleur-camp': groupe?.couleur }}>
+      <div className="carte-poste-haut">
+        <span className="mono discret" style={{ fontSize: '0.72rem' }}>{poste.nom} · option</span>
+        <span className="badge pastille" data-statut={libres > 0 ? 'ouvert' : 'complet'}>{libres > 0 ? `${libres} place${libres > 1 ? 's' : ''} libre${libres > 1 ? 's' : ''}` : 'Complet'}</span>
+      </div>
+      <h3>{option.nom}</h3>
+      <div className="effectif">
+        <div className="effectif-jauge" role="img" aria-label={`${pris} en poste sur ${total}`}>
+          {Array.from({ length: total }, (_, i) => <span key={i} className={i < pris ? 'plein' : ''} />)}
+        </div>
+        <span className="mono">{pris} / {total} en poste</span>
+      </div>
+      {option.membres?.length > 0 && <p className="membres-option"><Icone nom="utilisateur" taille={14} />{option.membres.join(' · ')}</p>}
+      {option.description && <p className="discret" style={{ fontSize: '0.9rem' }}>{option.description}</p>}
+      {option.missions?.length > 0 && <ul className="liste-missions petit">{option.missions.map((m) => <li key={m}><Icone nom="check" taille={14} />{m}</li>)}</ul>}
+    </Apparition>
+  )
+}
+
 export function CartePoste({ poste, groupe, onDetails, onAttente, delai = 0 }) {
   const ouvert = poste.statut === 'ouvert'
   const hr = poste.categorie === 'hr'
@@ -62,7 +91,10 @@ export function TiroirPoste({ poste, groupe, onFermer }) {
         <h3 className="titre-section">En option <span className="facultatif">facultatif</span></h3>
         <div className="liste-options">
           {poste.options.map((o) => (
-            <div key={o.id} className="option-apercu"><Icone nom="etoiles" taille={18} /><div><strong>{o.nom}</strong><p className="discret">{o.description}</p></div></div>
+            <div key={o.id} className="option-apercu"><Icone nom="etoiles" taille={18} /><div><strong>{o.nom}</strong>
+              <span className="mono discret" style={{ marginLeft: 8, fontSize: '0.75rem' }}>{effectifOption(o).pris} / {effectifOption(o).total} en poste</span>
+              <p className="discret">{o.description}</p>
+              {o.missions?.length > 0 && <ul className="liste-missions petit">{o.missions.map((m) => <li key={m}><Icone nom="check" taille={14} />{m}</li>)}</ul>}</div></div>
           ))}
         </div>
       </>)}

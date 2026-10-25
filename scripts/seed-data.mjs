@@ -31,8 +31,10 @@ export const postesStaff = [
       q('q5', 'Propose une idée d’animation pour le serveur.')],
     options: [
       { id: 'regisseur', nom: 'Régisseur·se de fiche', description: 'Correction des fiches de personnage.',
+        missions: ['Lecture et correction des fiches de personnage soumises', 'Vérification de la cohérence avec les règles du serveur (noms, rangs, génétique)', 'Retours bienveillants et guidage des membres lors des corrections'], places_total: 2, places_dispo: 2, membres: [],
         questions: [q('q1', "Comment vérifies-tu la cohérence d'une fiche avec les règles du serveur ?"), q('q2', 'Comment formules-tu un retour de correction sans décourager le membre ?'), q('q3', 'Un membre conteste ta correction — comment réagis-tu ?')] },
       { id: 'geneticien', nom: 'Généticien·ne', description: 'Correction génétique des personnages.',
+        missions: ['Traitement des demandes de génétique (pelages, yeux, traits hérités)', 'Gestion et mise à jour du registre génétique du serveur', 'Accompagnement des membres sur les questions génétiques complexes'], places_total: 1, places_dispo: 1, membres: [],
         questions: [q('q1', "Explique le fonctionnement de l'hérédité de la couleur des yeux dans le Codex."), q('q2', 'Un membre demande un pelage rare pour son OC — comment évalues-tu la demande ?'), q('q3', 'Comment tiens-tu un registre génétique à jour sur un serveur actif ?')] },
     ] },
   { groupe: 'narration', nom: 'Staff Narration', places: 2, anciennete: ANC, disponibilite: '5h / semaine minimum',
@@ -46,6 +48,7 @@ export const postesStaff = [
       q('q4', 'Quelles tâches imagines-tu pour dynamiser la vie d’un clan ?')],
     options: [
       { id: 'pnj', nom: 'Gestion PNJ', description: "Gestion et incarnation des PNJ de l'univers.",
+        missions: ['Gestion et incarnation des PNJ lors des interactions avec les membres', "Création de nouveaux PNJ cohérents avec le lore et l'univers", 'Suivi des PNJ impliqués dans plusieurs fils narratifs simultanément'], places_total: 2, places_dispo: 2, membres: [],
         questions: [q('q1', 'Comment gères-tu un PNJ impliqué dans plusieurs fils narratifs actifs ?'), q('q2', "Crée un concept de PNJ secondaire pour le Clan de l'Ombre."), q('q3', 'Un PNJ que tu joues doit prendre une décision qui déplaira à certains membres — comment procèdes-tu ?')] },
     ] },
 ]

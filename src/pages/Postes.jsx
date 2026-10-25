@@ -3,7 +3,8 @@ import { useSearchParams } from 'react-router-dom'
 import { useAsync, useTitre } from '../lib/hooks'
 import { lireGroupes, lirePostes } from '../lib/api'
 import { Squelettes, Erreur, Vide, Apparition } from '../components/Ui'
-import { CartePoste, SceauGroupe, TiroirPoste, ModaleAttente } from '../components/PostesUi'
+import { Icone } from '../components/Icons'
+import { CarteOption, CartePoste, SceauGroupe, TiroirPoste, ModaleAttente } from '../components/PostesUi'
 
 export default function Postes() {
   useTitre('Postes')
@@ -26,6 +27,8 @@ export default function Postes() {
       postes: data.postes.filter((p) => p.groupe === g.id && p.categorie === vue && (!seulementOuverts || p.statut === 'ouvert')),
     })).filter((s) => s.postes.length)
   }, [data, vue, seulementOuverts])
+
+  const specialites = useMemo(() => (data?.postes || []).filter((p) => p.categorie === 'staff').flatMap((p) => (p.options || []).map((option) => ({ option, poste: p }))), [data])
 
   const tous = data?.postes.filter((p) => p.categorie === vue) || []
   const ouverts = tous.filter((p) => p.statut === 'ouvert')
@@ -78,6 +81,20 @@ export default function Postes() {
           </div>
         </section>
       ))}
+
+      {vue === 'staff' && data && specialites.length > 0 && (
+        <section className="section-groupe">
+          <Apparition className="entete-groupe">
+            <span className="sceau-clan"><Icone nom="etoiles" taille={20} /></span>
+            <div><h2>Spécialités</h2><p className="discret">Options facultatives au sein des équipes staff : effectif actuel et missions de chacune.</p></div>
+          </Apparition>
+          <div className="grille grille-2">
+            {specialites.map(({ option, poste }, i) => (
+              <CarteOption key={`${poste.id}:${option.id}`} option={option} poste={poste} delai={i * 60} groupe={data.groupes.find((g) => g.id === poste.groupe)} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {detail && <TiroirPoste poste={detail} groupe={data.groupes.find((g) => g.id === detail.groupe)} onFermer={() => setDetail(null)} />}
       {attente && <ModaleAttente poste={attente} groupe={data.groupes.find((g) => g.id === attente.groupe)} onFermer={() => setAttente(null)} />}

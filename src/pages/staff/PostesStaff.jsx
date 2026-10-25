@@ -71,6 +71,37 @@ export default function PostesStaff() {
         </section>
       ))}
 
+      {vue === 'staff' && (
+        <section style={{ marginBottom: 24 }}>
+          <h2 className="titre-section">Spécialités (options)</h2>
+          <div className="tableau-boite">
+            <table className="tableau">
+              <thead><tr><th>Spécialité</th><th>Équipe</th><th>Effectif</th><th>Membres en poste</th><th /></tr></thead>
+              <tbody>
+                {postes.filter((p) => p.categorie === 'staff').flatMap((p) => (p.options || []).map((o) => ({ p, o }))).map(({ p, o }) => {
+                  const total = o.places_total ?? 0, libres = Math.min(o.places_dispo ?? total, total)
+                  const maj = (patch) => rapide(p, { options: p.options.map((x) => (x.id === o.id ? { ...x, ...patch } : x)) }, 'Spécialité mise à jour.')
+                  return (
+                    <tr key={`${p.id}:${o.id}`}>
+                      <td><strong>{o.nom}</strong><div className="discret" style={{ fontSize: '0.78rem' }}>{(o.missions || []).length} mission{(o.missions || []).length > 1 ? 's' : ''}</div></td>
+                      <td className="discret">{p.nom}</td>
+                      <td><div className="stepper">
+                        <button className="bouton-icone" aria-label="Un membre en moins" disabled={libres >= total} onClick={() => maj({ places_dispo: libres + 1, places_total: total })}><Icone nom="moins" taille={14} /></button>
+                        <span className="mono">{total - libres} / {total}</span>
+                        <button className="bouton-icone" aria-label="Un membre en plus" disabled={libres <= 0} onClick={() => maj({ places_dispo: libres - 1, places_total: total })}><Icone nom="plus" taille={14} /></button>
+                      </div></td>
+                      <td><input type="text" defaultValue={(o.membres || []).join(', ')} placeholder="Pseudos séparés par des virgules" aria-label="Membres en poste"
+                                 onBlur={(e) => { const v = e.target.value.split(',').map((x) => x.trim()).filter(Boolean); if (v.join(',') !== (o.membres || []).join(',')) maj({ membres: v }) }} /></td>
+                      <td className="actions-ligne"><button className="bouton petit fantome" onClick={() => setEdition(p)}><Icone nom="crayon" taille={14} /> Détails</button></td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
       {edition && <ModalePoste poste={edition} groupes={groupes} onFermer={() => setEdition(null)} onFait={rechargerRef} />}
       {groupesOuverts && <ModaleGroupes groupes={groupes} onFermer={() => setGroupesOuverts(false)} onFait={rechargerRef} />}
     </div>
@@ -150,11 +181,21 @@ function ModalePoste({ poste, groupes, onFermer, onFait }) {
                      onChange={(e) => maj({ options: p.options.map((x, k) => (k === oi ? { ...x, nom: e.target.value } : x)) })} />
               <input type="text" value={o.description || ''} placeholder="Description courte" aria-label="Description de l'option"
                      onChange={(e) => maj({ options: p.options.map((x, k) => (k === oi ? { ...x, description: e.target.value } : x)) })} />
+              <div className="formulaire-grille">
+                <div className="champ"><label className="etiquette">Places au total</label>
+                  <input type="number" min="0" value={o.places_total ?? 0} onChange={(e) => { const t = Number(e.target.value); maj({ options: p.options.map((x, k) => (k === oi ? { ...x, places_total: t, places_dispo: Math.min(x.places_dispo ?? t, t) } : x)) }) }} /></div>
+                <div className="champ"><label className="etiquette">Places libres</label>
+                  <input type="number" min="0" max={o.places_total ?? 0} value={o.places_dispo ?? o.places_total ?? 0} onChange={(e) => maj({ options: p.options.map((x, k) => (k === oi ? { ...x, places_dispo: Math.min(Number(e.target.value), x.places_total ?? 0) } : x)) })} /></div>
+              </div>
+              <div className="champ"><label className="etiquette">Membres en poste <span className="facultatif">pseudos séparés par des virgules</span></label>
+                <input type="text" value={(o.membres || []).join(', ')} onChange={(e) => maj({ options: p.options.map((x, k) => (k === oi ? { ...x, membres: e.target.value.split(',').map((v) => v.trim()).filter(Boolean) } : x)) })} /></div>
+              <div className="champ"><label className="etiquette">Missions <span className="facultatif">une par ligne</span></label>
+                <textarea rows={4} value={(o.missions || []).join('\n')} onChange={(e) => maj({ options: p.options.map((x, k) => (k === oi ? { ...x, missions: e.target.value.split('\n').filter((l) => l.trim()) } : x)) })} /></div>
               <EditeurChamps questions champs={o.questions || []} types={['textarea', 'text']} libelleAjout="Ajouter une question à l'option"
                              onChange={(questions) => maj({ options: p.options.map((x, k) => (k === oi ? { ...x, questions } : x)) })} />
             </div>
           ))}
-          <button type="button" className="bouton fantome petit" onClick={() => maj({ options: [...(p.options || []), { id: `option${(p.options || []).length + 1}`, nom: '', description: '', questions: [] }] })}>
+          <button type="button" className="bouton fantome petit" onClick={() => maj({ options: [...(p.options || []), { id: `option${(p.options || []).length + 1}`, nom: '', description: '', missions: [], places_total: 1, places_dispo: 1, membres: [], questions: [] }] })}>
             <Icone nom="plus" taille={15} /> Ajouter une option</button>
         </>)}
         <div className="modale-actions">
