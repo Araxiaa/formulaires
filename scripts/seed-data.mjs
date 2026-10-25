@@ -93,7 +93,7 @@ const anc = { id: 'anciennete', label: 'Depuis combien de temps es-tu sur le ser
 
 export const formulaires = [
   { type: 'staff', titre: 'Candidature Staff', ouvert: true,
-    description: "Rejoins l'équipe qui fait vivre le serveur : guides, narrateurs et bâtisseurs.",
+    description: "Rejoins l'équipe qui fait vivre le serveur : Staff Guide ou Staff Narration.",
     etapes: [
       { id: 'toi', titre: 'Toi', description: 'Faisons connaissance.', champs: [pseudo, anc,
         { id: 'presentation', label: 'Présente-toi', type: 'textarea', min: 150, required: true, hint: 'Qui es-tu, hors et en RP ? Ce qui te définit en quelques lignes.' }] },
