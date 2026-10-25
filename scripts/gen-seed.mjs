@@ -11,7 +11,7 @@ for (const g of d.groupes)
 
 let ordre = 0
 for (const p of d.postesStaff)
-  out.push(`insert into recrutement.postes (categorie,groupe,nom,description,missions,anciennete,disponibilite,note_candidat,statut,places_total,places_dispo,questions,ouvert_le,ordre) values ('staff',${s(p.groupe)},${s(p.nom)},${s(p.description)},${arr(p.missions)},${s(p.anciennete)},${s(p.disponibilite)},${s(p.note_candidat)},'ouvert',${p.places},${p.places},${j(p.questions)},now(),${++ordre});`)
+  out.push(`insert into recrutement.postes (categorie,groupe,nom,description,missions,anciennete,disponibilite,note_candidat,statut,places_total,places_dispo,questions,options,ouvert_le,ordre) values ('staff',${s(p.groupe)},${s(p.nom)},${s(p.description)},${arr(p.missions)},${s(p.anciennete)},${s(p.disponibilite)},${s(p.note_candidat)},'ouvert',${p.places},${p.places},${j(p.questions)},${j(p.options || [])},now(),${++ordre});`)
 ordre = 0
 for (const p of d.postesHr)
   out.push(`insert into recrutement.postes (categorie,groupe,nom,type_rang,titulaire,note,statut,places_total,places_dispo,questions,ouvert_le,ordre) values ('hr',${s(p.groupe)},${s(p.nom)},${s(p.type_rang)},${s(p.titulaire)},${s(p.note)},${s(p.statut)},1,${p.statut === 'ouvert' ? 1 : 0},${j(p.questions)},${p.statut === 'ouvert' ? 'now()' : 'null'},${++ordre});`)
@@ -29,3 +29,14 @@ for (const [k, v] of Object.entries(d.parametres))
 out.push('commit;')
 writeFileSync(new URL('../supabase/migrations/002_seed.sql', import.meta.url), out.join('\n') + '\n')
 console.log('002_seed.sql généré :', out.length, 'lignes')
+
+// Migration « delta » pour une base déjà initialisée avec l'ancienne liste de rôles
+const delta = ['-- GÉNÉRÉ — Refonte des équipes staff : Staff Guide / Staff Narration + options, fin du pôle Bâtisseur.',
+  "alter table recrutement.postes add column if not exists options jsonb not null default '[]';",
+  "delete from recrutement.postes where categorie = 'staff';",
+  "delete from recrutement.groupes where id = 'batisseur';"]
+d.postesStaff.forEach((p, i) =>
+  delta.push(`insert into recrutement.postes (categorie,groupe,nom,description,missions,anciennete,disponibilite,note_candidat,statut,places_total,places_dispo,questions,options,ordre) values ('staff',${s(p.groupe)},${s(p.nom)},${s(p.description)},${arr(p.missions)},${s(p.anciennete)},${s(p.disponibilite)},${s(p.note_candidat)},'ouvert',${p.places},${p.places},${j(p.questions)},${j(p.options || [])},${i + 1});`))
+delta.push(`update recrutement.formulaires set etapes = jsonb_set(etapes, '{1,description}', to_jsonb(${s('Choisis ton équipe, puis les options qui t’intéressent.')}::text)) where type = 'staff';`)
+delta.push(`insert into recrutement.faq (section,question,reponse,ordre) values (${s('Candidatures Staff')},${s('Que sont les options ?')},${s(d.faq.find((f) => f[1] === 'Que sont les options ?')[2])},6);`)
+writeFileSync(new URL('../supabase/migrations/004_equipes_staff.sql', import.meta.url), delta.join('\n') + '\n')

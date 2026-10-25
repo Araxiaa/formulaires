@@ -8,7 +8,7 @@ import { Icone } from '../../components/Icons'
 import EditeurChamps from '../../components/staff/EditeurChamps'
 import { STATUTS_POSTE, ouvertDepuis } from '../../lib/format'
 
-const VIDE_STAFF = { categorie: 'staff', groupe: 'guide', nom: '', description: '', missions: [], anciennete: '1 à 2 mois sur le serveur', disponibilite: '5h / semaine minimum', note_candidat: '', statut: 'indispo', places_total: 1, places_dispo: 1, questions: [], ordre: 99 }
+const VIDE_STAFF = { categorie: 'staff', groupe: 'guide', nom: '', description: '', missions: [], anciennete: '1 à 2 mois sur le serveur', disponibilite: '5h / semaine minimum', note_candidat: '', statut: 'indispo', places_total: 1, places_dispo: 1, questions: [], options: [], ordre: 99 }
 const VIDE_HR = { categorie: 'hr', groupe: 'tonnerre', nom: '', type_rang: 'meneur', titulaire: '', note: '', statut: 'indispo', places_total: 1, places_dispo: 0, questions: [], ordre: 99 }
 
 export default function PostesStaff() {
@@ -97,6 +97,7 @@ function ModalePoste({ poste, groupes, onFermer, onFait }) {
         note_candidat: donnees.note_candidat.trim() || null, description: donnees.description.trim() || null,
         places_dispo: Math.min(Number(donnees.places_dispo), Number(donnees.places_total)),
         questions: donnees.questions.filter((q) => q.label.trim()),
+        options: (donnees.options || []).filter((o) => o.nom.trim()).map((o, i) => ({ ...o, id: o.id.startsWith('option') ? (o.nom.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '') || `option${i + 1}`) : o.id, questions: (o.questions || []).filter((q) => q.label.trim()) })),
       })
       notifier('Poste enregistré.', 'succes'); onFait(); onFermer()
     } catch (err) { notifier(messageErreur(err), 'erreur') } finally { setEnvoi(false) }
@@ -138,6 +139,24 @@ function ModalePoste({ poste, groupes, onFermer, onFait }) {
         </>)}
         <h3 className="titre-section">Questions de mise en situation</h3>
         <EditeurChamps questions champs={p.questions || []} types={['textarea', 'text']} onChange={(questions) => maj({ questions })} libelleAjout="Ajouter une question" />
+        {!hr && (<>
+          <h3 className="titre-section">Options facultatives</h3>
+          <p className="aide">Spécialités que le candidat peut cocher en plus du rôle (ex : Régisseur·se de fiche). Chaque option ajoute ses propres questions.</p>
+          {(p.options || []).map((o, oi) => (
+            <div key={o.id + oi} className="editeur-champ">
+              <div className="editeur-champ-haut"><span className="mono discret">{o.id}</span>
+                <button type="button" className="bouton-icone" aria-label="Supprimer l'option" onClick={() => maj({ options: p.options.filter((_, k) => k !== oi) })}><Icone nom="poubelle" taille={16} /></button></div>
+              <input type="text" value={o.nom} placeholder="Nom de l'option" aria-label="Nom de l'option"
+                     onChange={(e) => maj({ options: p.options.map((x, k) => (k === oi ? { ...x, nom: e.target.value } : x)) })} />
+              <input type="text" value={o.description || ''} placeholder="Description courte" aria-label="Description de l'option"
+                     onChange={(e) => maj({ options: p.options.map((x, k) => (k === oi ? { ...x, description: e.target.value } : x)) })} />
+              <EditeurChamps questions champs={o.questions || []} types={['textarea', 'text']} libelleAjout="Ajouter une question à l'option"
+                             onChange={(questions) => maj({ options: p.options.map((x, k) => (k === oi ? { ...x, questions } : x)) })} />
+            </div>
+          ))}
+          <button type="button" className="bouton fantome petit" onClick={() => maj({ options: [...(p.options || []), { id: `option${(p.options || []).length + 1}`, nom: '', description: '', questions: [] }] })}>
+            <Icone nom="plus" taille={15} /> Ajouter une option</button>
+        </>)}
         <div className="modale-actions">
           {p.id && <button type="button" className="bouton danger" style={{ marginRight: 'auto' }} onClick={supprimer}><Icone nom="poubelle" taille={15} /> Supprimer</button>}
           <button type="button" className="bouton fantome" onClick={onFermer}>Annuler</button>

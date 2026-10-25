@@ -5,7 +5,7 @@ import { Bouton } from '../Ui'
 import Champ from './Champ'
 import ChoixPoste from './ChoixPoste'
 import Succes from './Succes'
-import { champsEtape, construireReponses, erreursEtape } from './validation'
+import { champsEtape, cleOption, construireReponses, erreursEtape, optionsChoisies, questionsPoste } from './validation'
 import { soumettre } from '../../lib/api'
 import { messageErreur } from '../../lib/supabase'
 import { useAuth } from '../../lib/auth'
@@ -23,6 +23,7 @@ export default function FormWizard({ formulaire, postes, groupes, params, posteI
 
   const [valeurs, setValeurs] = useState({})
   const [choisis, setChoisis] = useState(() => (posteInitial ? [posteInitial] : []))
+  const [options, setOptions] = useState([])
   const [index, setIndex] = useState(0)
   const [atteint, setAtteint] = useState(0)
   const [erreurs, setErreurs] = useState({})
@@ -36,7 +37,7 @@ export default function FormWizard({ formulaire, postes, groupes, params, posteI
   const haut = useRef(null)
 
   const etape = etapes[index]
-  const ctx = useMemo(() => ({ valeurs, postesChoisis: choisis }), [valeurs, choisis])
+  const ctx = useMemo(() => ({ valeurs, postesChoisis: choisis, options }), [valeurs, choisis, options])
 
   /* ───── Brouillon ───── */
   useEffect(() => {
@@ -50,12 +51,12 @@ export default function FormWizard({ formulaire, postes, groupes, params, posteI
     if (premier.current) { premier.current = false; return }
     const t = setTimeout(() => {
       try {
-        localStorage.setItem(cle, JSON.stringify({ valeurs, choisis: choisis.map((p) => p.id), index, atteint, t: Date.now() }))
+        localStorage.setItem(cle, JSON.stringify({ valeurs, choisis: choisis.map((p) => p.id), options, index, atteint, t: Date.now() }))
         setSauveLe(Date.now())
       } catch { /* ignore */ }
     }, 800)
     return () => clearTimeout(t)
-  }, [valeurs, choisis, index, atteint, cle])
+  }, [valeurs, choisis, options, index, atteint, cle])
 
   // Le « il y a X » se met à jour sans interaction
   useEffect(() => { const t = setInterval(() => rafraichir((n) => n + 1), 20000); return () => clearInterval(t) }, [])
@@ -63,6 +64,7 @@ export default function FormWizard({ formulaire, postes, groupes, params, posteI
   function restaurer() {
     const ids = brouillon.choisis || []
     setValeurs(brouillon.valeurs || {})
+    setOptions(brouillon.options || [])
     setChoisis(ids.map((id) => postes.find((p) => p.id === id)).filter(Boolean))
     setIndex(Math.min(brouillon.index || 0, etapes.length - 1))
     setAtteint(brouillon.atteint || brouillon.index || 0)
@@ -104,9 +106,17 @@ export default function FormWizard({ formulaire, postes, groupes, params, posteI
     const max = etape.max || 1
     setErreurs({})
     setChoisis((c) => {
-      if (c.some((x) => x.id === p.id)) return c.filter((x) => x.id !== p.id)
+      if (c.some((x) => x.id === p.id)) {
+        setOptions((o) => o.filter((k) => !k.startsWith(`${p.id}:`)))
+        return c.filter((x) => x.id !== p.id)
+      }
       return max === 1 ? [p] : c.length >= max ? c : [...c, p]
     })
+  }
+
+  function basculerOption(p, o) {
+    const k = cleOption(p.id, o.id)
+    setOptions((l) => (l.includes(k) ? l.filter((x) => x !== k) : [...l, k]))
   }
 
   /* ───── Envoi ───── */
@@ -121,7 +131,8 @@ export default function FormWizard({ formulaire, postes, groupes, params, posteI
       const reponses = construireReponses(formulaire.etapes, ctx)
       const principal = choisis[0]
       const groupe = principal && groupes.find((g) => g.id === principal.groupe)
-      const resume = type === 'staff' ? choisis.map((p) => p.nom).join(' + ')
+      const opts = optionsChoisies(ctx).map((o) => o.nom)
+      const resume = type === 'staff' ? choisis.map((p) => p.nom).join(' + ') + (opts.length ? ` (+ ${opts.join(', ')})` : '')
         : type === 'hr' ? `${principal?.nom} — ${groupe?.nom || ''}`
         : [formulaire.titre, valeurs.nom_oc].filter(Boolean).join(' · ')
       const c = await soumettre({
@@ -190,25 +201,34 @@ export default function FormWizard({ formulaire, postes, groupes, params, posteI
                   <><Icone nom="discord" taille={22} /><span>Connecté·e en tant que <strong>{pseudoDiscord}</strong>. Ta candidature sera liée à ton compte : tu la retrouveras sans code dans « Mon suivi ».</span></>
                 ) : (
                   <><Icone nom="discord" taille={22} /><span>Connecte-toi avec Discord pour lier ta candidature à ton compte et être mentionné·e à la décision <span className="discret">(facultatif)</span>.</span>
-                    <button type="button" className="bouton petit" onClick={() => { try { localStorage.setItem(cle, JSON.stringify({ valeurs, choisis: choisis.map((p) => p.id), index, atteint, t: Date.now() })) } catch { /* ignore */ } connexionDiscord() }}>Se connecter</button></>
+                    <button type="button" className="bouton petit" onClick={() => { try { localStorage.setItem(cle, JSON.stringify({ valeurs, choisis: choisis.map((p) => p.id), options, index, atteint, t: Date.now() })) } catch { /* ignore */ } connexionDiscord() }}>Se connecter</button></>
                 )}
               </div>
             )}
 
             {etape.kind === 'poste' && (
-              <ChoixPoste postes={postes} groupes={groupes} choisis={choisis} max={etape.max || 1} onToggle={basculerPoste} erreur={erreurs.__poste} />
+              <ChoixPoste postes={postes} groupes={groupes} choisis={choisis} max={etape.max || 1} onToggle={basculerPoste} erreur={erreurs.__poste}
+                          options={options} onToggleOption={basculerOption} />
             )}
 
-            {etape.kind === 'questions_poste' && choisis.map((p) => (
-              <section key={p.id} className="bloc-questions">
-                {choisis.length > 1 && <h3 className="titre-section">{p.nom}</h3>}
-                {(p.questions || []).map((q, i) => {
-                  const k = `q:${p.id}:${q.id}`
-                  return <Champ key={k} champ={{ ...q, cle: k }} indice={i + 1} valeur={valeurs[k]} erreur={erreurs[k]}
-                                onChange={(v) => { setValeurs((s) => ({ ...s, [k]: v })); if (erreurs[k]) setErreurs((e) => ({ ...e, [k]: '' })) }} />
-                })}
-              </section>
-            ))}
+            {etape.kind === 'questions_poste' && choisis.map((p) => {
+              const qs = questionsPoste(p, options)
+              const blocs = [{ titre: choisis.length > 1 ? p.nom : null, items: qs.filter((q) => !q.option) },
+                ...(p.options || []).filter((o) => options.includes(cleOption(p.id, o.id))).map((o) => ({ titre: `Option : ${o.nom}`, items: qs.filter((q) => q.option?.id === o.id) }))]
+              return (
+                <section key={p.id} className="bloc-questions">
+                  {blocs.map((b, bi) => (
+                    <div key={bi}>
+                      {b.titre && <h3 className="titre-section">{b.titre}</h3>}
+                      {b.items.map((q, i) => (
+                        <Champ key={q.cle} champ={q} indice={i + 1} valeur={valeurs[q.cle]} erreur={erreurs[q.cle]}
+                               onChange={(v) => { setValeurs((st) => ({ ...st, [q.cle]: v })); if (erreurs[q.cle]) setErreurs((e) => ({ ...e, [q.cle]: '' })) }} />
+                      ))}
+                    </div>
+                  ))}
+                </section>
+              )
+            })}
 
             {!etape.kind && champsEtape(etape, ctx).map((c) => (
               <Champ key={c.cle} champ={c} valeur={valeurs[c.cle]} erreur={erreurs[c.cle]}

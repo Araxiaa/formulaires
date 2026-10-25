@@ -34,6 +34,9 @@ export function CartePoste({ poste, groupe, onDetails, onAttente, delai = 0 }) {
       ) : (
         <p className="discret" style={{ fontSize: '0.9rem' }}>{poste.description}</p>
       )}
+      {!hr && poste.options?.length > 0 && (
+        <p className="options-carte"><Icone nom="etoiles" taille={14} />En option : {poste.options.map((o) => o.nom).join(' · ')}</p>
+      )}
       {ouvert && poste.ouvert_le && <p className="mono discret" style={{ fontSize: '0.72rem', margin: 0 }}>{ouvertDepuis(poste.ouvert_le)}</p>}
       <div className="carte-poste-actions">
         {ouvert
@@ -55,6 +58,14 @@ export function TiroirPoste({ poste, groupe, onFermer }) {
         <h3 className="titre-section">Missions</h3>
         <ul className="liste-missions">{poste.missions.map((m) => <li key={m}><Icone nom="check" taille={16} />{m}</li>)}</ul>
       </>)}
+      {poste.options?.length > 0 && (<>
+        <h3 className="titre-section">En option <span className="facultatif">facultatif</span></h3>
+        <div className="liste-options">
+          {poste.options.map((o) => (
+            <div key={o.id} className="option-apercu"><Icone nom="etoiles" taille={18} /><div><strong>{o.nom}</strong><p className="discret">{o.description}</p></div></div>
+          ))}
+        </div>
+      </>)}
       <h3 className="titre-section">Prérequis</h3>
       <div className="prerequis">
         <div><Icone nom="calendrier" taille={18} /><span>Ancienneté</span><strong>{poste.anciennete || '—'}</strong></div>
@@ -63,7 +74,7 @@ export function TiroirPoste({ poste, groupe, onFermer }) {
       {poste.note_candidat && <div className="note-importante"><Icone nom="alerte" taille={18} />{poste.note_candidat}</div>}
       <div className="modale-actions">
         {poste.statut === 'ouvert'
-          ? <Link className="bouton" to={`/candidater/staff?poste=${poste.id}`}>Candidater pour ce rôle <Icone nom="fleche" taille={16} /></Link>
+          ? <Link className="bouton" to={`/candidater/staff?poste=${poste.id}`}>Candidater à cette équipe <Icone nom="fleche" taille={16} /></Link>
           : <span className="badge" data-statut={poste.statut}>{STATUTS_POSTE[poste.statut]}</span>}
       </div>
     </Modale>

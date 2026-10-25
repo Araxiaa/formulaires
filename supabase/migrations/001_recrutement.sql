@@ -56,6 +56,7 @@ create table if not exists recrutement.postes (           -- rôles staff + rang
   places_total int not null default 1 check (places_total >= 0),
   places_dispo int not null default 1 check (places_dispo >= 0),
   questions jsonb not null default '[]',
+  options jsonb not null default '[]',
   ouvert_le timestamptz,
   ordre int not null default 0,
   updated_at timestamptz not null default now()

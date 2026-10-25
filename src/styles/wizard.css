@@ -96,3 +96,7 @@
   .wizard-carte { padding: 22px 18px; }
   .prerequis { grid-template-columns: 1fr; }
 }
+
+.poste-choix-coche.carre { border-radius: 7px; }
+.bloc-options { margin-top: 22px; padding: 16px; border: 1px dashed var(--couleur-bordure); border-radius: var(--rayon); background: var(--couleur-fond); }
+.bloc-options .groupe-choix-titre { color: var(--couleur-accent); margin-bottom: 4px; }
