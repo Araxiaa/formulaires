@@ -25,6 +25,7 @@ export const lireParametres = () => mem('parametres', async () => {
   const rows = unwrap(await supabase.from('parametres').select('*'))
   return Object.fromEntries(rows.map((r) => [r.cle, r.valeur]))
 })
+export const lireEquipe = () => mem('equipe', async () => unwrap(await supabase.from('equipe').select('*').order('ordre').order('pseudo')), 30000)
 export const statsPubliques = () => mem('stats', async () => unwrap(await supabase.rpc('stats_publiques')), 30000)
 
 /* ───────── Candidats ───────── */
@@ -102,3 +103,6 @@ export const lireSecrets = async () => {
 export const sauverSecret = async (cle, valeur) =>
   valeur ? unwrap(await supabase.from('secrets').upsert({ cle, valeur })) : unwrap(await supabase.from('secrets').delete().eq('cle', cle))
 export const testerWebhook = async (canal) => unwrap(await supabase.rpc('tester_webhook', { p_canal: canal }))
+
+export const sauverMembre = async (m) => { invalider('equipe'); return unwrap(await supabase.from('equipe').upsert(m)) }
+export const supprimerMembre = async (id) => { invalider('equipe'); return unwrap(await supabase.from('equipe').delete().eq('id', id)) }

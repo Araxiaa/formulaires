@@ -43,3 +43,13 @@ export function ouvertDepuis(date) {
 export const initiale = (nom = '') => (nom.replace(/^(Clan (du|de l'|de la)|Pôle)\s*/i, '').trim()[0] || '?').toUpperCase()
 
 export const plur = (n, s, p = `${s}s`) => `${n} ${n > 1 ? p : s}`
+
+// Catégories de l'annuaire de l'équipe (ordre d'affichage)
+export const CATEGORIES_EQUIPE = [
+  { id: 'fondateur', label: 'Fondateurs', singulier: 'Fondateur·rice', icone: 'couronne', couleur: '#e2b866' },
+  { id: 'moderateur', label: 'Modérateurs', singulier: 'Modérateur·rice', icone: 'bouclier', couleur: '#7fb0dc' },
+  { id: 'guide', label: 'Staffs Guide', singulier: 'Staff Guide', icone: 'boussole', couleur: '#5A9A70' },
+  { id: 'narration', label: 'Staffs Narration', singulier: 'Staff Narration', icone: 'plume', couleur: '#8A9A42' },
+  { id: 'apprenti_guide', label: 'Apprentis Staff Guide', singulier: 'Apprenti·e Guide', icone: 'pousse', couleur: '#5A9A70' },
+  { id: 'apprenti_narration', label: 'Apprentis Staff Narration', singulier: 'Apprenti·e Narration', icone: 'pousse', couleur: '#8A9A42' },
+]

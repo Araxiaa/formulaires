@@ -14,6 +14,8 @@ const Candidater = lazy(() => import('./pages/Candidater'))
 const Suivi = lazy(() => import('./pages/Suivi'))
 const Rangs = lazy(() => import('./pages/Rangs'))
 const Faq = lazy(() => import('./pages/Faq'))
+const Equipe = lazy(() => import('./pages/Equipe'))
+const EquipeStaff = lazy(() => import('./pages/staff/EquipeStaff'))
 const StaffLayout = lazy(() => import('./pages/staff/StaffLayout'))
 const VueEnsemble = lazy(() => import('./pages/staff/VueEnsemble'))
 const Candidatures = lazy(() => import('./pages/staff/Candidatures'))
@@ -51,6 +53,7 @@ export default function App() {
                   <Route path="/suivi/:code" element={<Suivi />} />
                   <Route path="/rangs" element={<Rangs />} />
                   <Route path="/faq" element={<Faq />} />
+                  <Route path="/equipe" element={<Equipe />} />
 
                   <Route path="/staff" element={<RequireStaff><StaffLayout /></RequireStaff>}>
                     <Route index element={<VueEnsemble />} />
@@ -58,6 +61,7 @@ export default function App() {
                     <Route path="candidatures/:id" element={<CandidatureDetail />} />
                     <Route path="postes" element={<PostesStaff />} />
                     <Route path="attente" element={<Attente />} />
+                    <Route path="equipe" element={<EquipeStaff />} />
                     <Route path="modeles" element={<Modeles />} />
                     <Route path="faq" element={<FaqStaff />} />
                     <Route path="formulaires" element={<RequireStaff adminOnly><Formulaires /></RequireStaff>} />

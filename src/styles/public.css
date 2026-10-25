@@ -149,3 +149,73 @@
 .effectif-jauge span { width: 22px; height: 10px; border-radius: 99px; border: 1.5px solid var(--couleur-camp, var(--couleur-accent)); }
 .effectif-jauge span.plein { background: var(--couleur-camp, var(--couleur-accent)); }
 .membres-option { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 0.88rem; color: var(--couleur-camp, var(--couleur-accent)); }
+
+/* ═════════ Accueil v2 : nuit de lune sur la forêt ═════════ */
+:root { --ciel-haut: #e9dfc9; --ciel-bas: #f1c99a; --foret-loin: #8a9a7c; --foret-proche: var(--couleur-fond); }
+[data-theme='sombre'] { --ciel-haut: #070c0b; --ciel-bas: #1c3a33; --foret-loin: #10201b; --foret-proche: var(--couleur-fond); }
+
+.hero2 { position: relative; overflow: hidden; text-align: center; padding: 96px 20px 150px; background: linear-gradient(180deg, var(--ciel-haut) 0%, var(--ciel-bas) 100%); }
+.ciel { position: absolute; inset: 0; pointer-events: none; }
+.lune-grande { position: absolute; top: 9%; right: 12%; color: var(--couleur-lune); filter: drop-shadow(0 0 40px var(--couleur-lune)) drop-shadow(0 0 90px color-mix(in srgb, var(--couleur-lune) 55%, transparent)); animation: flotte 9s ease-in-out infinite; }
+[data-theme=''] .lune-grande, :root:not([data-theme='sombre']) .lune-grande { color: #d9a441; filter: drop-shadow(0 0 40px rgba(255, 190, 90, 0.7)); }
+.etoiles span { position: absolute; border-radius: 50%; background: var(--couleur-lune); opacity: 0; animation: scintille 4s ease-in-out infinite; }
+:root:not([data-theme='sombre']) .etoiles { display: none; }
+@keyframes scintille { 50% { opacity: 0.9; } }
+.hero2-contenu { position: relative; z-index: 2; }
+.hero2 h1 { font-size: clamp(2.4rem, 7vw, 4.4rem); line-height: 1.02; max-width: 820px; margin: 0 auto 18px; font-variation-settings: 'SOFT' 100, 'WONK' 1; text-shadow: 0 2px 30px rgba(0, 0, 0, 0.25); }
+.hero2 h1 em { color: var(--couleur-accent); font-style: italic; }
+.hero2 .hero-texte { color: var(--couleur-texte); opacity: 0.85; }
+.foret { position: absolute; left: 0; bottom: -1px; width: 100%; height: 120px; z-index: 1; }
+.foret-loin { fill: var(--foret-loin); }
+.foret-proche { fill: var(--foret-proche); }
+
+.page-accueil { padding-top: 0; }
+.verre { position: relative; z-index: 3; margin-top: -42px; display: flex; flex-wrap: wrap; border: 1px solid var(--couleur-bordure); border-radius: 16px; overflow: hidden; background: color-mix(in srgb, var(--couleur-fond-carte) 78%, transparent); backdrop-filter: blur(14px); box-shadow: var(--ombre-carte); }
+.verre .stat-item { padding: 22px 12px; }
+.verre .stat-valeur { font-size: 2.3rem; }
+
+/* Chronologie */
+.chrono { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; position: relative; counter-reset: etape; }
+.chrono::before { content: ''; position: absolute; top: 28px; left: 8%; right: 8%; height: 2px; background: repeating-linear-gradient(90deg, var(--couleur-bordure) 0 8px, transparent 8px 16px); }
+.chrono-etape { position: relative; text-align: center; padding: 0 8px; }
+.chrono-pastille { display: grid; place-items: center; width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 50%; position: relative; z-index: 1; background: var(--couleur-fond-carte); border: 2px solid var(--couleur-accent); color: var(--couleur-accent); box-shadow: 0 0 0 6px var(--couleur-fond), 0 0 24px var(--lueur); transition: transform 0.3s var(--ease); }
+.chrono-etape:hover .chrono-pastille { transform: translateY(-4px) scale(1.06); }
+.chrono-num { font: 700 0.7rem var(--police-mono); letter-spacing: 0.2em; color: var(--couleur-texte-discret); }
+.chrono-etape h3 { margin: 2px 0 4px; font-size: 1.2rem; }
+.chrono-etape p { margin: 0; font-size: 0.9rem; }
+@media (max-width: 700px) { .chrono::before { display: none; } }
+
+.parcours { position: relative; align-items: center; }
+.parcours > div { flex: 1; }
+.parcours-fleche { color: var(--couleur-accent); transition: transform 0.25s var(--ease); flex-shrink: 0; }
+.parcours:hover .parcours-fleche { transform: translateX(5px); }
+
+/* Aperçu de l'équipe */
+.equipe-apercu { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.equipe-tuile { display: grid; gap: 4px; justify-items: start; padding: 16px; height: 100%; text-decoration: none; color: var(--couleur-camp); border-radius: var(--rayon); border: 1px solid var(--couleur-bordure); border-top: 3px solid var(--couleur-camp); background: var(--couleur-fond-carte); transition: transform 0.25s var(--ease), box-shadow 0.25s; }
+.equipe-tuile:hover { transform: translateY(-4px); box-shadow: 0 14px 28px -14px var(--couleur-camp); }
+.equipe-nombre { font: 600 2rem var(--police-titre); line-height: 1; color: var(--couleur-texte); }
+.equipe-label { font-size: 0.85rem; color: var(--couleur-texte-discret); }
+.equipe-pile { display: flex; margin-top: 6px; min-height: 26px; }
+.equipe-pile i { width: 26px; height: 26px; margin-left: -6px; border-radius: 50%; display: grid; place-items: center; font: 700 0.7rem var(--police-corps); font-style: normal; color: #14100a; background: var(--couleur-camp); border: 2px solid var(--couleur-fond-carte); }
+.equipe-pile i:first-child { margin-left: 0; }
+
+/* Annuaire */
+.grille-membres { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.membre { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: var(--rayon); border: 1px solid var(--couleur-bordure); border-left: 3px solid var(--couleur-camp); background: var(--couleur-fond-carte); height: 100%; }
+.membre p { margin: 0; font-size: 0.82rem; }
+.membre-avatar { width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; font: 600 1.2rem var(--police-titre); color: #14100a; background: var(--couleur-camp); }
+.membre-specialites { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px !important; }
+.membre-specialites .badge { color: var(--couleur-camp); }
+.membre-bouton { all: unset; display: block; cursor: pointer; border-radius: var(--rayon); }
+.membre-bouton:hover .membre { border-color: var(--couleur-camp); }
+.membre-bouton:focus-visible { outline: 2px solid var(--couleur-accent); outline-offset: 2px; }
+
+/* Clans + appel final */
+.bandeau-clans { margin-top: 44px; padding: 28px 18px; text-align: center; border-radius: 16px; border: 1px solid var(--couleur-bordure); background: radial-gradient(ellipse 60% 120% at 50% 0%, var(--lueur), transparent 70%), var(--couleur-fond-carte); }
+.clans-ligne { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.clan-pastille { display: inline-flex; align-items: center; gap: 12px; padding: 10px 20px 10px 12px; border-radius: 99px; text-decoration: none; font: 600 1.05rem var(--police-titre); border: 1px solid var(--couleur-bordure); background: var(--couleur-fond); transition: all 0.25s var(--ease); }
+.clan-pastille:hover { border-color: var(--couleur-camp); transform: translateY(-3px); box-shadow: 0 10px 24px -12px var(--couleur-camp); }
+.appel { margin-top: 44px; text-align: center; padding: 44px 18px 8px; }
+.appel h2 { font-size: clamp(1.7rem, 4vw, 2.4rem); margin: 8px 0; font-variation-settings: 'SOFT' 100, 'WONK' 1; }
+@media (max-width: 640px) { .lune-grande { right: 5%; top: 4%; transform: scale(0.7); } .hero2 { padding: 70px 18px 130px; } }

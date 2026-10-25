@@ -14,6 +14,7 @@ function Menu() {
     { to: '/staff/candidatures', icone: 'liste', label: 'Candidatures', badge: aTraiter },
     { to: '/staff/postes', icone: 'grille', label: 'Postes' },
     { to: '/staff/attente', icone: 'horloge', label: "Listes d'attente" },
+    { to: '/staff/equipe', icone: 'familles', label: 'Équipe' },
     { to: '/staff/modeles', icone: 'enveloppe', label: 'Réponses types' },
     { to: '/staff/faq', icone: 'question', label: 'FAQ' },
     ...(estAdmin ? [

@@ -9,6 +9,7 @@ const LIENS = [
   { to: '/candidater', label: 'Candidater', icone: 'crayon' },
   { to: '/suivi', label: 'Mon suivi', icone: 'recherche' },
   { to: '/rangs', label: 'Hauts Rangs', icone: 'couronne' },
+  { to: '/equipe', label: 'Équipe', icone: 'familles' },
   { to: '/faq', label: 'FAQ', icone: 'question' },
 ]
 
