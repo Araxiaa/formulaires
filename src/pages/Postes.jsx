@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAsync, useTitre } from '../lib/hooks'
-import { lireGroupes, lirePostes } from '../lib/api'
+import { lireEquipe, lireGroupes, lirePostes } from '../lib/api'
 import { Squelettes, Erreur, Vide, Apparition } from '../components/Ui'
 import { Icone } from '../components/Icons'
 import { CarteOption, CartePoste, SceauGroupe, TiroirPoste, ModaleAttente } from '../components/PostesUi'
@@ -15,8 +15,8 @@ export default function Postes() {
   const [attente, setAttente] = useState(null)
 
   const { data, loading, error, recharger } = useAsync(async () => {
-    const [groupes, postes] = await Promise.all([lireGroupes(), lirePostes()])
-    return { groupes, postes }
+    const [groupes, postes, equipe] = await Promise.all([lireGroupes(), lirePostes(), lireEquipe().catch(() => [])])
+    return { groupes, postes, equipe }
   }, [])
 
   const sections = useMemo(() => {
@@ -90,13 +90,13 @@ export default function Postes() {
           </Apparition>
           <div className="grille grille-2">
             {specialites.map(({ option, poste }, i) => (
-              <CarteOption key={`${poste.id}:${option.id}`} option={option} poste={poste} delai={i * 60} groupe={data.groupes.find((g) => g.id === poste.groupe)} />
+              <CarteOption key={`${poste.id}:${option.id}`} option={option} poste={poste} equipe={data.equipe} delai={i * 60} groupe={data.groupes.find((g) => g.id === poste.groupe)} />
             ))}
           </div>
         </section>
       )}
 
-      {detail && <TiroirPoste poste={detail} groupe={data.groupes.find((g) => g.id === detail.groupe)} onFermer={() => setDetail(null)} />}
+      {detail && <TiroirPoste poste={detail} equipe={data.equipe} groupe={data.groupes.find((g) => g.id === detail.groupe)} onFermer={() => setDetail(null)} />}
       {attente && <ModaleAttente poste={attente} groupe={data.groupes.find((g) => g.id === attente.groupe)} onFermer={() => setAttente(null)} />}
     </div>
   )

@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useStaffData } from '../../lib/staffData'
 import { useToast } from '../../lib/toast'
-import { sauverGroupe, sauverPoste, supprimerPoste } from '../../lib/api'
+import { lireEquipe, sauverGroupe, sauverPoste, supprimerPoste } from '../../lib/api'
+import { useAsync } from '../../lib/hooks'
+import { effectifOption } from '../../components/PostesUi'
 import { messageErreur } from '../../lib/supabase'
 import { Bouton, Chargeur, Modale } from '../../components/Ui'
 import { Icone } from '../../components/Icons'
@@ -17,6 +19,7 @@ export default function PostesStaff() {
   const [vue, setVue] = useState('staff')
   const [edition, setEdition] = useState(null)
   const [groupesOuverts, setGroupesOuverts] = useState(false)
+  const { data: equipe } = useAsync(() => lireEquipe().catch(() => []), [])
 
   if (!postes.length && !groupes.length) return <Chargeur />
   const liste = postes.filter((p) => p.categorie === vue)
@@ -79,19 +82,23 @@ export default function PostesStaff() {
               <thead><tr><th>Spécialité</th><th>Équipe</th><th>Effectif</th><th>Membres en poste</th><th /></tr></thead>
               <tbody>
                 {postes.filter((p) => p.categorie === 'staff').flatMap((p) => (p.options || []).map((o) => ({ p, o }))).map(({ p, o }) => {
-                  const total = o.places_total ?? 0, libres = Math.min(o.places_dispo ?? total, total)
+                  const eff = effectifOption(o, equipe || [])
+                  const total = eff.total, libres = eff.libres
+                  const lie = (equipe || []).some((m) => m.specialites?.includes(o.nom))
                   const maj = (patch) => rapide(p, { options: p.options.map((x) => (x.id === o.id ? { ...x, ...patch } : x)) }, 'Spécialité mise à jour.')
                   return (
                     <tr key={`${p.id}:${o.id}`}>
                       <td><strong>{o.nom}</strong><div className="discret" style={{ fontSize: '0.78rem' }}>{(o.missions || []).length} mission{(o.missions || []).length > 1 ? 's' : ''}</div></td>
                       <td className="discret">{p.nom}</td>
                       <td><div className="stepper">
-                        <button className="bouton-icone" aria-label="Un membre en moins" disabled={libres >= total} onClick={() => maj({ places_dispo: libres + 1, places_total: total })}><Icone nom="moins" taille={14} /></button>
-                        <span className="mono">{total - libres} / {total}</span>
-                        <button className="bouton-icone" aria-label="Un membre en plus" disabled={libres <= 0} onClick={() => maj({ places_dispo: libres - 1, places_total: total })}><Icone nom="plus" taille={14} /></button>
+                        <button className="bouton-icone" aria-label="Un membre en moins" disabled={lie || libres >= total} onClick={() => maj({ places_dispo: libres + 1, places_total: total })}><Icone nom="moins" taille={14} /></button>
+                        <span className="mono">{eff.pris} / {total}</span>
+                        <button className="bouton-icone" aria-label="Un membre en plus" disabled={lie || libres <= 0} onClick={() => maj({ places_dispo: libres - 1, places_total: total })}><Icone nom="plus" taille={14} /></button>
                       </div></td>
-                      <td><input type="text" defaultValue={(o.membres || []).join(', ')} placeholder="Pseudos séparés par des virgules" aria-label="Membres en poste"
-                                 onBlur={(e) => { const v = e.target.value.split(',').map((x) => x.trim()).filter(Boolean); if (v.join(',') !== (o.membres || []).join(',')) maj({ membres: v }) }} /></td>
+                      <td>{lie
+                        ? <span className="discret" style={{ fontSize: '0.85rem' }}>{eff.membres.join(', ')} <span className="mono">· depuis l'annuaire Équipe</span></span>
+                        : <input type="text" defaultValue={(o.membres || []).join(', ')} placeholder="Pseudos séparés par des virgules (ou via l'annuaire Équipe)" aria-label="Membres en poste"
+                                 onBlur={(e) => { const v = e.target.value.split(',').map((x) => x.trim()).filter(Boolean); if (v.join(',') !== (o.membres || []).join(',')) maj({ membres: v }) }} />}</td>
                       <td className="actions-ligne"><button className="bouton petit fantome" onClick={() => setEdition(p)}><Icone nom="crayon" taille={14} /> Détails</button></td>
                     </tr>
                   )

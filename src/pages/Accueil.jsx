@@ -5,7 +5,7 @@ import { lireEquipe, lireFormulaires, lireGroupes, lireParametres, lirePostes, s
 import { Croissant, Icone } from '../components/Icons'
 import { Apparition } from '../components/Ui'
 import { CartePoste, ModaleAttente, SceauGroupe } from '../components/PostesUi'
-import { CATEGORIES_EQUIPE, TYPES } from '../lib/format'
+import { CATEGORIES_EQUIPE, TYPES, membresDe } from '../lib/format'
 
 const ETAPES = [
   { icone: 'boussole', titre: 'Choisis', texte: 'Parcours les postes ouverts et trouve celui qui te ressemble.' },
@@ -144,7 +144,7 @@ export default function Accueil() {
           <h2 className="titre-section">L'équipe</h2>
           <div className="equipe-apercu">
             {CATEGORIES_EQUIPE.map((cat, i) => {
-              const membres = data.equipe.filter((m) => m.categorie === cat.id)
+              const membres = membresDe(data.equipe, cat.id)
               return (
                 <Apparition key={cat.id} delai={i * 60}>
                   <Link to="/equipe" className="equipe-tuile" style={{ '--couleur-camp': cat.couleur }}>

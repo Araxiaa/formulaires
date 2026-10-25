@@ -16,15 +16,18 @@ export function SceauGroupe({ groupe, petit }) {
   )
 }
 
-export const effectifOption = (o) => {
-  const total = o.places_total ?? 0
-  const libres = Math.min(o.places_dispo ?? total, total)
-  return { total, libres, pris: total - libres }
+// L'effectif vient de l'annuaire de l'équipe (membres ayant cette spécialité) ;
+// à défaut, on retombe sur la saisie manuelle de l'option.
+export const effectifOption = (o, equipe = []) => {
+  const lies = equipe.filter((m) => m.specialites?.includes(o.nom))
+  const total = Math.max(o.places_total ?? 0, lies.length)
+  const pris = lies.length ? lies.length : (o.places_total ?? 0) - Math.min(o.places_dispo ?? o.places_total ?? 0, o.places_total ?? 0)
+  return { total, libres: Math.max(total - pris, 0), pris, membres: lies.length ? lies.map((m) => m.pseudo) : (o.membres || []) }
 }
 
 // Spécialité facultative (Régisseur·se, Généticien·ne, Gestion PNJ) : effectif + missions
-export function CarteOption({ option, poste, groupe, delai = 0 }) {
-  const { total, libres, pris } = effectifOption(option)
+export function CarteOption({ option, poste, groupe, equipe = [], delai = 0 }) {
+  const { total, libres, pris, membres } = effectifOption(option, equipe)
   return (
     <Apparition delai={delai} className="carte carte-option" style={{ '--couleur-camp': groupe?.couleur }}>
       <div className="carte-poste-haut">
@@ -38,7 +41,7 @@ export function CarteOption({ option, poste, groupe, delai = 0 }) {
         </div>
         <span className="mono">{pris} / {total} en poste</span>
       </div>
-      {option.membres?.length > 0 && <p className="membres-option"><Icone nom="utilisateur" taille={14} />{option.membres.join(' · ')}</p>}
+      {membres.length > 0 && <p className="membres-option"><Icone nom="utilisateur" taille={14} />{membres.join(' · ')}</p>}
       {option.description && <p className="discret" style={{ fontSize: '0.9rem' }}>{option.description}</p>}
       {option.missions?.length > 0 && <ul className="liste-missions petit">{option.missions.map((m) => <li key={m}><Icone nom="check" taille={14} />{m}</li>)}</ul>}
     </Apparition>
@@ -77,7 +80,7 @@ export function CartePoste({ poste, groupe, onDetails, onAttente, delai = 0 }) {
   )
 }
 
-export function TiroirPoste({ poste, groupe, onFermer }) {
+export function TiroirPoste({ poste, groupe, equipe = [], onFermer }) {
   return (
     <Modale tiroir onFermer={onFermer} titre={poste.nom}>
       <p className="sous-titre">{groupe?.nom}</p>
@@ -92,7 +95,7 @@ export function TiroirPoste({ poste, groupe, onFermer }) {
         <div className="liste-options">
           {poste.options.map((o) => (
             <div key={o.id} className="option-apercu"><Icone nom="etoiles" taille={18} /><div><strong>{o.nom}</strong>
-              <span className="mono discret" style={{ marginLeft: 8, fontSize: '0.75rem' }}>{effectifOption(o).pris} / {effectifOption(o).total} en poste</span>
+              <span className="mono discret" style={{ marginLeft: 8, fontSize: '0.75rem' }}>{effectifOption(o, equipe).pris} / {effectifOption(o, equipe).total} en poste</span>
               <p className="discret">{o.description}</p>
               {o.missions?.length > 0 && <ul className="liste-missions petit">{o.missions.map((m) => <li key={m}><Icone nom="check" taille={14} />{m}</li>)}</ul>}</div></div>
           ))}

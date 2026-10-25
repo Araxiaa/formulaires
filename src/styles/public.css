@@ -200,17 +200,6 @@
 .equipe-pile i { width: 26px; height: 26px; margin-left: -6px; border-radius: 50%; display: grid; place-items: center; font: 700 0.7rem var(--police-corps); font-style: normal; color: #14100a; background: var(--couleur-camp); border: 2px solid var(--couleur-fond-carte); }
 .equipe-pile i:first-child { margin-left: 0; }
 
-/* Annuaire */
-.grille-membres { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-.membre { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: var(--rayon); border: 1px solid var(--couleur-bordure); border-left: 3px solid var(--couleur-camp); background: var(--couleur-fond-carte); height: 100%; }
-.membre p { margin: 0; font-size: 0.82rem; }
-.membre-avatar { width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; font: 600 1.2rem var(--police-titre); color: #14100a; background: var(--couleur-camp); }
-.membre-specialites { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px !important; }
-.membre-specialites .badge { color: var(--couleur-camp); }
-.membre-bouton { all: unset; display: block; cursor: pointer; border-radius: var(--rayon); }
-.membre-bouton:hover .membre { border-color: var(--couleur-camp); }
-.membre-bouton:focus-visible { outline: 2px solid var(--couleur-accent); outline-offset: 2px; }
-
 /* Clans + appel final */
 .bandeau-clans { margin-top: 44px; padding: 28px 18px; text-align: center; border-radius: 16px; border: 1px solid var(--couleur-bordure); background: radial-gradient(ellipse 60% 120% at 50% 0%, var(--lueur), transparent 70%), var(--couleur-fond-carte); }
 .clans-ligne { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
@@ -219,3 +208,55 @@
 .appel { margin-top: 44px; text-align: center; padding: 44px 18px 8px; }
 .appel h2 { font-size: clamp(1.7rem, 4vw, 2.4rem); margin: 8px 0; font-variation-settings: 'SOFT' 100, 'WONK' 1; }
 @media (max-width: 640px) { .lune-grande { right: 5%; top: 4%; transform: scale(0.7); } .hero2 { padding: 70px 18px 130px; } }
+
+/* ═════════ Équipe : synthèse, sections, cartes membres ═════════ */
+.equipe-synthese { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 14px; margin-bottom: 22px; }
+.synthese-total { display: grid; align-content: center; justify-items: center; gap: 2px; padding: 16px; border-radius: 14px; border: 1px solid var(--couleur-bordure); background: radial-gradient(ellipse 90% 90% at 50% 0%, var(--lueur), transparent 75%), var(--couleur-fond-carte); text-align: center; }
+.synthese-total .stat-valeur { font-size: 2.8rem; }
+.synthese-barres { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }
+.synthese-barre { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--couleur-bordure); background: var(--couleur-fond-carte); color: var(--couleur-camp); font: 500 0.88rem var(--police-corps); cursor: pointer; text-align: left; position: relative; overflow: hidden; transition: transform 0.2s var(--ease), border-color 0.2s; }
+.synthese-barre::before { content: ''; position: absolute; inset: 0; background: var(--couleur-camp); opacity: 0.06; transition: opacity 0.2s; }
+.synthese-barre:hover, .synthese-barre.actif { border-color: var(--couleur-camp); transform: translateY(-2px); }
+.synthese-barre.actif::before { opacity: 0.16; }
+.synthese-label { flex: 1; color: var(--couleur-texte); position: relative; }
+.synthese-barre strong { font: 700 1.2rem var(--police-titre); color: var(--couleur-texte); position: relative; }
+@media (max-width: 700px) { .equipe-synthese { grid-template-columns: 1fr; } }
+
+.equipe-section { margin-top: 34px; }
+.equipe-titre { display: flex; align-items: center; gap: 14px; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 1px solid var(--couleur-bordure); position: relative; }
+.equipe-titre::after { content: ''; position: absolute; left: 0; bottom: -1px; width: 90px; height: 2px; background: var(--couleur-camp); }
+.equipe-titre .sceau-clan { background: var(--couleur-camp); }
+.equipe-titre h2 { margin: 0; font-size: 1.45rem; color: var(--couleur-camp); }
+.equipe-titre p { margin: 2px 0 0; font-size: 0.88rem; }
+.equipe-compte { margin-left: auto; font: 700 0.72rem var(--police-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--couleur-texte-discret); white-space: nowrap; }
+.equipe-vide { margin: 0; padding: 18px; border: 1px dashed var(--couleur-bordure); border-radius: var(--rayon); color: var(--couleur-texte-discret); text-align: center; }
+.equipe-vide a { color: var(--couleur-accent); }
+
+.grille-membres { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); }
+.grille-fondateurs { grid-template-columns: repeat(auto-fit, minmax(300px, 420px)); justify-content: center; }
+
+.membre { position: relative; display: flex; gap: 14px; align-items: center; padding: 14px 16px; height: 100%; border-radius: 14px; border: 1px solid var(--couleur-bordure); background: linear-gradient(135deg, color-mix(in srgb, var(--c1) 8%, var(--couleur-fond-carte)), var(--couleur-fond-carte) 60%); transition: transform 0.25s var(--ease), border-color 0.25s, box-shadow 0.25s; }
+.membre:hover { transform: translateY(-3px); border-color: var(--c1); box-shadow: 0 14px 28px -16px var(--c1); }
+.membre-anneau { flex-shrink: 0; display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; background: conic-gradient(from 200deg, var(--c1), var(--c2), var(--c1)); padding: 3px; }
+.membre-avatar { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; background: var(--couleur-fond-carte); color: var(--c1); font: 600 1.35rem var(--police-titre); }
+.membre-corps { min-width: 0; display: grid; gap: 5px; }
+.membre-nom { font: 600 1.05rem var(--police-titre); overflow-wrap: anywhere; }
+.membre-titre { margin: 0; font-size: 0.82rem; color: var(--couleur-texte-discret); }
+.membre-roles, .membre-specialites { display: flex; flex-wrap: wrap; gap: 5px; }
+.role-puce { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 99px; font: 600 0.7rem var(--police-corps); color: var(--couleur-camp); background: color-mix(in srgb, var(--couleur-camp) 13%, transparent); border: 1px solid color-mix(in srgb, var(--couleur-camp) 40%, transparent); }
+.role-puce.courant { background: var(--couleur-camp); color: #14100a; }
+.specialite { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 6px; font: 500 0.7rem var(--police-mono); color: var(--couleur-texte-discret); border: 1px dashed var(--couleur-bordure); }
+.membre-polyvalent { position: absolute; top: 10px; right: 12px; color: var(--c2); opacity: 0.8; }
+
+.membre.grand { flex-direction: column; text-align: center; padding: 26px 20px 22px; background: radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in srgb, var(--c1) 18%, transparent), transparent 70%), var(--couleur-fond-carte); }
+.membre.grand .membre-anneau { width: 84px; height: 84px; box-shadow: 0 0 36px -6px var(--c1); }
+.membre.grand .membre-avatar { font-size: 2.1rem; }
+.membre.grand .membre-nom { font-size: 1.4rem; }
+.membre.grand .membre-roles, .membre.grand .membre-specialites { justify-content: center; }
+
+.membre-bouton { all: unset; display: block; cursor: pointer; border-radius: 14px; }
+.membre-bouton:focus-visible { outline: 2px solid var(--couleur-accent); outline-offset: 2px; }
+.apercu-membre { margin-bottom: 18px; }
+.apercu-membre .membre:hover { transform: none; box-shadow: none; }
+.choix-carte[style*='--couleur-camp'].actif { border-color: var(--couleur-camp); background: color-mix(in srgb, var(--couleur-camp) 14%, transparent); box-shadow: 0 0 0 1px var(--couleur-camp) inset; }
+.choix-carte[style*='--couleur-camp'].actif .choix-pastille { background: var(--couleur-camp); border-color: var(--couleur-camp); }
